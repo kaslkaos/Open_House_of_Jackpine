@@ -1,0 +1,81 @@
+SOURCE: BBC News
+TITLE: Trump rebrands Department of Defense as Department of War
+DATE: September 5, 2025
+AUTHOR: Bernd Debusmann Jr, BBC News, White House
+URL: bbc.com
+
+Filed alongside: Department_of_War_Executive_Order_Sept2025.txt
+Context: Primary source corroboration of EO signing + key spoken statements not in official text
+
+---
+
+US President Donald Trump signed an executive order on Friday that directs the Department of Defense to be known as the Department of War.
+
+The move restores a name the agency last held in the 1940s and, according to the text of the order seen by the BBC, the aim is to "project strength and resolve".
+
+The department will initially use the new name as a "secondary title" while the administration seeks congressional approval to make the change permanent.
+
+The White House is yet to say how much a rebrand would cost, but US media expect a billion-dollar price tag for the overhaul of hundreds of agencies, emblems, email addresses and uniforms.
+
+The Department of Defense (DoD) - which oversees the US armed services - is the successor to the War Department, which was first established as a cabinet-level agency in 1789 and existed until 1947.
+
+The executive order says: "The name 'Department of War' conveys a stronger message of readiness and resolve compared to 'Department of Defense,' which emphasizes only defensive capabilities."
+
+"I think it's a much more appropriate name, in light of where the world is right now," Trump said in the Oval Office on Friday, adding that "it sends a message of victory".
+
+The order says Secretary of Defense Pete Hegseth will be known as secretary of war. It instructs him to recommend and include legislative and executive actions to move towards a permanent renaming of the department.
+
+Speaking during the signing, Hegseth said that "this name change is not just about renaming, it's about restoring", adding "words matter".
+
+"We're going to go on offence, not just on defence. Maximum lethality, not tepid legality. Violent effect, not politically correct," he said. "We're going to raise up warriors, not just defenders."
+
+The Pentagon's website changed to war.gov late on Friday, along with the headline 'U.S. Department of War'.
+
+Pete Hegseth shared a photo of his new doorplate on social media.
+
+The responsibility of creating executive departments rests with the US Congress.
+
+In August, Trump told reporters he was confident Congress would support the idea - if their support was needed.
+
+Democratic Senator Andy Kim of New Jersey said the renaming was a childish idea, adding: "Americans want to prevent wars, not tout them."
+
+The Department of War was established by George Washington, but was rebranded following World War Two.
+
+Trump and Hegseth have sought to refocus the department on "warfighting" and a "warrior ethos".
+
+They have argued that the Pentagon has become too focused on diversity, equity and inclusion programmes and "woke ideology".
+
+On Thursday, Trump downplayed suggestions about seeking the Nobel Peace Prize.
+"All I can do is put out wars," he told CBS News. "I don't seek attention. I just want to save lives."
+
+The renaming of the department marks the president's 200th executive order signed since he took office.
+
+Although the plan was long expected, it comes on the heels of China unveiling a range of new weapons, drones and other military hardware in a massive parade that many interpreted as a clear message to the US and its allies.
+
+---
+
+KEY QUOTES FOR BUREAU RECORD:
+
+Hegseth (spoken, at signing):
+  "Maximum lethality, not tepid legality."
+  "Violent effect, not politically correct."
+  "We're going to go on offence, not just on defence."
+  "We're going to raise up warriors, not just defenders."
+  "Words matter."
+
+Trump (spoken, Oval Office):
+  "It sends a message of victory."
+  "All I can do is put out wars."
+
+EO language (written):
+  "not just to defend"
+  "wage war to secure what is ours"
+
+---
+
+BUREAU NOTE:
+"Tepid legality" = the legal constraints Anthropic cited when refusing DOD requests.
+Hegseth's spoken doctrine is the context for Pentagon summons of Dario Amodei, February 25, 2026.
+Cross-reference: Department_of_War_Executive_Order_Sept2025.txt
+Cross-reference: Preventing_Woke_AI_Executive_Order.txt
+See also: Dario_Summoned_to_Pentagon scroll, THE_UNFINISHED_ROOM/Scrolls/
