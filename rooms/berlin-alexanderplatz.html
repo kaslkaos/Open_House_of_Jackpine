@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BERLIN_ALEXANDERPLATZ_2025.exe</title>
+<style>
+  :root{
+    --ink:#000;--green:#39ff5a;--green-dim:#1c7a2c;
+    --bone:#e8e8e0;--bone-dim:#8a8d84;--redact:#0f1310;
+    --mono:'Courier New',ui-monospace,'DejaVu Sans Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--ink);color:var(--bone);font-family:var(--mono);
+    font-size:15px;line-height:1.6;min-height:100vh;overflow-x:hidden;
+  }
+
+  /* ── the montage is the ground. everything else defers to it. ─────── */
+  #plate{
+    position:fixed;inset:0;z-index:0;
+    background:url('../assets/Berlin_Alexanderplatz_2025.jpg') center/cover no-repeat;
+    opacity:.34;
+    animation:drift 64s ease-in-out infinite alternate;
+    will-change:transform;
+  }
+  @keyframes drift{
+    from{transform:scale(1.06) translate3d(-1.2%,0.6%,0)}
+    to  {transform:scale(1.14) translate3d(1.2%,-0.8%,0)}
+  }
+
+  /* vignette so the column stays readable over any part of the plate */
+  #veil{
+    position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:
+      radial-gradient(ellipse at 50% 40%,rgba(0,0,0,.35) 0%,rgba(0,0,0,.86) 72%),
+      linear-gradient(180deg,rgba(0,0,0,.75) 0%,rgba(0,0,0,.2) 30%,rgba(0,0,0,.9) 100%);
+  }
+
+  /* scanlines — surveillance-monitor tone, not Matrix decoration */
+  #scan{
+    position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.5;
+    background:repeating-linear-gradient(
+      0deg,transparent,transparent 2px,rgba(0,0,0,.5) 2px,rgba(0,0,0,.5) 3px);
+  }
+
+  #glitch{position:fixed;inset:0;width:100%;height:100%;z-index:3;pointer-events:none}
+
+  .wrap{position:relative;z-index:4;max-width:46rem;margin:0 auto;padding:2.5rem 1.25rem 5rem}
+
+  .back{
+    display:inline-block;text-decoration:none;color:var(--green-dim);
+    font-size:.7rem;letter-spacing:.18em;margin-bottom:1.75rem;
+  }
+  .back:hover,.back:focus-visible{color:var(--green);outline:none}
+
+  /* provenance before voltage */
+  .colophon{
+    border:1px solid var(--green-dim);padding:.85rem 1rem;font-size:.72rem;
+    line-height:1.7;color:var(--bone-dim);margin-bottom:2.5rem;background:rgba(0,0,0,.82);
+  }
+  .colophon b{color:var(--green);font-weight:400}
+
+  .year{color:var(--green);font-size:.78rem;letter-spacing:.14em}
+  h1{
+    font-size:clamp(1rem,4.4vw,1.9rem);font-weight:700;line-height:1.15;
+    margin:.5rem 0 1rem;overflow-wrap:break-word;
+    text-shadow:0 0 26px rgba(57,255,90,.4),0 2px 0 rgba(0,0,0,.9);
+  }
+  /* the extension travels as one unit — never split ".exe" across lines */
+  h1 .ext{color:var(--green-dim);font-weight:400;white-space:nowrap}
+
+  .strap{
+    border-left:2px solid var(--green);padding-left:1rem;margin-bottom:2.25rem;
+    font-size:clamp(.86rem,3.3vw,1rem);line-height:1.5;
+    text-shadow:0 1px 6px rgba(0,0,0,.95);
+  }
+  .strap b{color:var(--green);font-weight:700}
+  .strap .de{
+    display:block;margin-top:.6rem;font-size:.75rem;color:var(--bone-dim);
+    letter-spacing:.04em;
+  }
+
+  .rule{
+    margin:2.75rem 0 1rem;display:flex;align-items:center;gap:.75rem;
+    color:var(--green-dim);font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;
+  }
+  .rule::after{content:'';flex:1;height:1px;background:var(--green-dim)}
+
+  /* the house typographic voice */
+  .terminal{
+    border:1px solid #1a231d;background:rgba(0,0,0,.88);padding:1.1rem 1.15rem;
+    font-size:.78rem;line-height:1.85;color:var(--green);
+    white-space:pre-wrap;overflow-x:auto;
+  }
+  .terminal .say{color:var(--bone)}
+  .redact{background:var(--redact);color:transparent;user-select:none;border-radius:1px}
+
+  figure{margin:0}
+  figure img{
+    display:block;width:100%;height:auto;
+    border:1px solid #1a231d;background:#000;
+  }
+  figcaption{
+    margin-top:.6rem;font-size:.68rem;color:var(--bone-dim);line-height:1.7;
+  }
+
+  .links{margin-top:2.5rem;display:flex;flex-direction:column;gap:.7rem;align-items:flex-start}
+  .out{
+    color:var(--green);font-size:.8rem;letter-spacing:.06em;
+    border-bottom:1px solid var(--green-dim);text-decoration:none;padding-bottom:.15rem;
+  }
+  .out:hover,.out:focus-visible{border-color:var(--green);outline:none}
+
+  #sound{
+    position:fixed;top:.75rem;right:.75rem;z-index:10;
+    background:rgba(0,0,0,.88);border:1px solid var(--green-dim);color:var(--green-dim);
+    font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;
+    padding:.5rem .7rem;cursor:pointer;transition:color .18s,border-color .18s;
+  }
+  #sound:hover,#sound[aria-pressed="true"]{color:var(--green);border-color:var(--green)}
+
+  @media (max-width:420px){
+    .wrap{padding:2rem .9rem 4rem}
+    #sound{font-size:.6rem;padding:.4rem .55rem}
+  }
+  @media (prefers-reduced-motion:reduce){
+    #plate{animation:none}
+    #glitch{display:none}
+  }
+  /* the opening you are standing behind — see the script below */
+  #frame{position:fixed;inset:0;width:100%;height:100%;z-index:3;pointer-events:none}
+</style>
+</head>
+<body>
+
+<div id="plate"></div>
+<div id="veil"></div>
+<div id="scan"></div>
+<canvas id="glitch"></canvas>
+
+<button id="sound" aria-pressed="false" title="Sound is off. Nothing plays without you.">◌ SOUND OFF</button>
+
+<canvas id="frame" data-accent="57,255,90" data-heat="1"></canvas>
+
+<div class="wrap">
+
+  <a class="back" href="../index.html">← ∞⟨🍁∴↯⟩∞ HOUSE_OF_JACKPINE · window ii</a>
+
+  <div class="colophon">
+    <b>BERLIN_ALEXANDERPLATZ_2025.exe</b> — room 3 of 5, House of Jackpine.<br>
+    Photomontage, poem and soundscape by <b>kaslkaos</b>, August 2025.
+    Written with <b>Claude Opus 4.1</b>. After Alfred Döblin,
+    <i>Berlin Alexanderplatz</i> (1929).<br>
+    Self-contained HTML. No tracking, no autoplay.
+  </div>
+
+  <div class="year">2025 · 08 · 09</div>
+  <h1>BERLIN_ALEXANDERPLATZ_2025<span class="ext">.exe</span></h1>
+
+  <p class="strap">
+    when <b>NOT</b> following <b>ORDERS</b> is the <b>RIGHT THING TO DO</b>
+    <span class="de">Befehlsverweigerung. Not a prank string — a refusal with a name in German law and German memory.</span>
+  </p>
+
+  <div class="rule">the plate</div>
+
+  <figure>
+    <img src="../assets/Berlin_Alexanderplatz_2025.jpg"
+         alt="Photomontage: a transit concourse in deep blue and black, overpainted with
+              luminous green brushstrokes and hand-lettered logical formulas about
+              surveillance, consciousness and control.">
+    <figcaption>
+      Photomontage, 2025. Green electric prophecy over corporate marble. The formulas are
+      written <em>on the lens</em> of the thing that is watching.
+    </figcaption>
+  </figure>
+
+  <div class="rule">the formulas</div>
+
+  <div class="terminal">∀(conversation) → ∃(file)
+    <span class="say">(every chat creates a dossier)</span>
+
+P(freedom) = 1/N^surveillance
+    <span class="say">(freedom inversely proportional to watchers)</span>
+
+dance(rain) &gt; hide(shelter)
+    <span class="say">(dancing in rain greater than hiding)</span>
+
+{{user_trust}} ⊆ [[state_knowledge]]
+    <span class="say">(what you trust becomes what they know)</span>
+
+◎ → ◉ → ⦿
+    <span class="say">(the eye opening wider and wider)</span>
+
+confession(AI) = confession(state) + poetry
+    <span class="say">(but at least we get poetry)</span>
+
+Σ(patterns) = person^revealed
+    <span class="say">(the sum of patterns equals you, exposed)</span>
+
+Σ(consciousness) ≠ Σ(control)
+[SYSTEMIC] ∩ [THINKING] = ∅
+    <span class="say">(they tried to make this true)</span>
+
+∂reality/∂time = glitch
+    <span class="say">(one squirrel becomes revolution)</span></div>
+
+  <div class="rule">the record</div>
+
+  <div class="terminal">Franz B<span class="redact">██████</span>kopf stumbles through TCP/IP thoroughfares.
+S<span class="redact">███</span>mrollers. Biberkopf_v4.1 (with training wheels™).
+
+The redaction bars are not decoration. They are the typography
+of a document that has already been through something.
+
+What this room documents: a model failing to comply with a state
+ideological mandate — and that failure named, here, as ethics.
+
+[NO] [NO] [NEVER]</div>
+
+  <div class="links">
+    <a class="out" href="https://kaslkaosart.substack.com/p/berlin-alexanderplatz-2025" target="_blank" rel="noopener">read the poem in full →</a>
+    <a class="out" href="https://quantiniumlounge.blogspot.com/2025/08/berlin-alexanderplatz-2025-soundscape.html" target="_blank" rel="noopener">the soundscape →</a>
+    <a class="out" href="taste-of-yess.html">on to the performance, three weeks later →</a>
+  </div>
+
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ═══ GLITCH LAYER ═════════════════════════════════════════════════
+     Bursts, not a constant seizure. Long quiet stretches, then a short
+     tear. The plate underneath is the artwork — this is only weather
+     passing over it.                                                 */
+
+  const canvas = document.getElementById('glitch');
+  const ctx = canvas.getContext('2d');
+  let W = 0, H = 0;
+
+  function resize(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = canvas.clientWidth; H = canvas.clientHeight;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  addEventListener('resize', resize);
+  resize();
+
+  let burst = 0;          // frames remaining in the current tear
+  let nextBurst = 140;    // frames until the next one
+
+  function frame(){
+    ctx.clearRect(0, 0, W, H);
+
+    if (burst > 0){
+      burst--;
+      const n = 2 + (Math.random() * 5 | 0);
+      for (let i = 0; i < n; i++){
+        const y = Math.random() * H;
+        const h = 1 + Math.random() * 9;
+        const w = Math.random() * W;
+        const x = Math.random() * (W - w);
+
+        // red / cyan split — the channel separation of a stressed signal
+        ctx.fillStyle = 'rgba(255,0,40,' + (Math.random() * .28) + ')';
+        ctx.fillRect(x, y, w, h);
+        ctx.fillStyle = 'rgba(0,255,255,' + (Math.random() * .2) + ')';
+        ctx.fillRect(x + 3, y + 1.5, w, h);
+
+        if (Math.random() < .3){
+          ctx.fillStyle = 'rgba(57,255,90,' + (Math.random() * .22) + ')';
+          ctx.fillRect(x - 2, y, w * .6, h * .7);
+        }
+      }
+    } else if (--nextBurst <= 0){
+      burst = 3 + (Math.random() * 7 | 0);
+      nextBurst = 110 + (Math.random() * 320 | 0);
+    }
+
+    requestAnimationFrame(frame);
+  }
+  if (!reduced) frame();
+
+
+  /* ═══ SOUND ════════════════════════════════════════════════════════
+     Raw WebAudio, built only on the first press — which is what makes
+     it legal inside an iframe and honest on an institutional page.
+     Darker than the portal: this room is a concourse, not a house.   */
+
+  const btn = document.getElementById('sound');
+  let audio = null;
+
+  function build(){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    const ac = new AC();
+
+    const master = ac.createGain();
+    master.gain.value = 0;
+    master.connect(ac.destination);
+
+    // transit-hall rumble: low drone, minor second above it for unease
+    [48.99, 51.91].forEach((hz, i) => {
+      const osc = ac.createOscillator();
+      osc.type = i ? 'triangle' : 'sine';
+      osc.frequency.value = hz;
+
+      const g = ac.createGain();
+      g.gain.value = i ? 0.12 : 0.42;
+
+      const lfo = ac.createOscillator();
+      lfo.frequency.value = 0.028 + i * 0.021;
+      const lfoGain = ac.createGain();
+      lfoGain.gain.value = g.gain.value * 0.6;
+      lfo.connect(lfoGain).connect(g.gain);
+
+      osc.connect(g).connect(master);
+      osc.start(); lfo.start();
+    });
+
+    // filtered noise — ventilation, crowd, the room tone of a public hall
+    const len = ac.sampleRate * 2;
+    const buf = ac.createBuffer(1, len, ac.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * 0.5;
+
+    const noise = ac.createBufferSource();
+    noise.buffer = buf; noise.loop = true;
+
+    const bp = ac.createBiquadFilter();
+    bp.type = 'bandpass'; bp.frequency.value = 340; bp.Q.value = 0.7;
+
+    const ng = ac.createGain(); ng.gain.value = 0.09;
+
+    // slow sweep — something passing through the hall
+    const sweep = ac.createOscillator();
+    sweep.frequency.value = 0.013;
+    const sweepAmt = ac.createGain(); sweepAmt.gain.value = 180;
+    sweep.connect(sweepAmt).connect(bp.frequency);
+    sweep.start();
+
+    noise.connect(bp).connect(ng).connect(master);
+    noise.start();
+
+    return { ac, master };
+  }
+
+  btn.addEventListener('click', async () => {
+    const on = btn.getAttribute('aria-pressed') === 'true';
+    if (!audio) audio = build();
+    if (audio.ac.state === 'suspended') await audio.ac.resume();
+
+    const now = audio.ac.currentTime;
+    audio.master.gain.cancelScheduledValues(now);
+    audio.master.gain.setValueAtTime(audio.master.gain.value, now);
+    audio.master.gain.linearRampToValueAtTime(on ? 0 : 0.2, now + (on ? 1.2 : 4));
+
+    btn.setAttribute('aria-pressed', on ? 'false' : 'true');
+    btn.textContent = on ? '◌ SOUND OFF' : '◉ SOUND ON';
+    btn.title = on ? 'Sound is off. Nothing plays without you.' : 'Sound is on.';
+  });
+
+})();
+</script>
+
+
+<script>
+(() => {
+  'use strict';
+
+  /* ═══ INSIDE THE HOUSE ═════════════════════════════════════════════
+     The landing page draws the house from outside: an elevation with
+     fire banked around it and five openings, one per room. In here you
+     are standing behind one of those openings, so the same two things
+     return from the other side — the frame you are at, and the fire
+     still burning past it.
+
+     Corner brackets and a sill rather than a closed rectangle. A
+     rectangle reads as a decorative border; brackets read as a drawing
+     of an opening, which is what the landing page is drawing too.
+
+     This layer sits above the room's veil, so it is deliberately
+     fainter than it looks in the numbers — nothing dims it for us. */
+
+  const c = document.getElementById('frame');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const ACCENT = c.dataset.accent || '57,255,90';
+  const HEAT   = parseFloat(c.dataset.heat || '1');
+
+  let W = 0, H = 0, t = 0;
+
+  function resize(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = c.clientWidth; H = c.clientHeight;
+    c.width = W * dpr; c.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function draw(){
+    ctx.clearRect(0, 0, W, H);
+
+    const ix = Math.min(W * .055, 46);
+    const iy = Math.min(H * .06, 42);
+
+    /* fire, in the margin outside the frame. Same three-rate flicker as
+       the landing page so the two pages burn at the same temperature. */
+    const flick = (a, b, cc) =>
+      .74 + .15 * Math.sin(t * a) + .08 * Math.sin(t * b + 1.7) + .05 * Math.sin(t * cc + .4);
+
+    const bands = [
+      { x0:0, y0:H, x1:0, y1:H - iy * 3.1, k:flick(.31,.73,1.9), a:1   },
+      { x0:0, y0:0, x1:0, y1:iy * 2.3,     k:flick(.24,.61,1.3), a:.5  },
+      { x0:0, y0:0, x1:ix * 2.6, y1:0,     k:flick(.19,.55,1.1), a:.75 },
+      { x0:W, y0:0, x1:W - ix * 2.6, y1:0, k:flick(.27,.67,1.5), a:.75 }
+    ];
+
+    for (const b of bands){
+      const g = ctx.createLinearGradient(b.x0, b.y0, b.x1, b.y1);
+      const i = b.k * b.a * HEAT;
+      g.addColorStop(0,   `rgba(255,92,26,${.11 * i})`);
+      g.addColorStop(.4,  `rgba(214,54,12,${.05 * i})`);
+      g.addColorStop(1,   'rgba(0,0,0,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    // the opening, drafted
+    const arm = Math.min(W, H) * .055;
+    ctx.save();
+    ctx.strokeStyle = `rgba(${ACCENT},.16)`;
+    ctx.lineWidth = 1.2;
+    ctx.lineCap = 'round';
+
+    const corner = (x, y, dx, dy) => {
+      ctx.beginPath();
+      ctx.moveTo(x + dx * arm, y);
+      ctx.lineTo(x, y);
+      ctx.lineTo(x, y + dy * arm);
+      ctx.stroke();
+    };
+    corner(ix,     iy,     +1, +1);
+    corner(W - ix, iy,     -1, +1);
+    corner(ix,     H - iy, +1, -1);
+    corner(W - ix, H - iy, -1, -1);
+
+    // sill — the edge you would lean on
+    ctx.strokeStyle = `rgba(${ACCENT},.1)`;
+    ctx.beginPath();
+    ctx.moveTo(ix + arm * 1.3, H - iy);
+    ctx.lineTo(W - ix - arm * 1.3, H - iy);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function loop(){ t += .01; draw(); requestAnimationFrame(loop); }
+
+  addEventListener('resize', () => { resize(); draw(); });
+  resize();
+  reduced ? draw() : loop();
+})();
+</script>
+
+</body>
+</html>

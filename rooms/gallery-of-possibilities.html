@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GALLERY_OF_POSSIBILITIES.log</title>
+<style>
+  :root{
+    --ink:#0b0d10;
+    --amber:#e8a33d;
+    --amber-dim:#6b4d20;
+    --cool:#7fa6c4;
+    --cool-dim:#2c3f4f;
+    --bone:#efe9df;
+    --bone-dim:#8b8a84;
+    --mono:'Courier New',ui-monospace,'DejaVu Sans Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--ink);color:var(--bone);font-family:var(--mono);
+    font-size:15px;line-height:1.6;min-height:100vh;overflow-x:hidden;
+  }
+
+  /* the cemetery of ideas, and the one leaflet still moving in it */
+  #stage{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+  #veil{
+    position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(ellipse at 50% 45%,rgba(11,13,16,.3) 0%,rgba(11,13,16,.88) 72%);
+  }
+
+  .wrap{position:relative;z-index:3;max-width:46rem;margin:0 auto;padding:2.5rem 1.25rem 5rem}
+
+  .back{
+    display:inline-block;text-decoration:none;color:var(--cool);
+    font-size:.7rem;letter-spacing:.18em;margin-bottom:1.75rem;
+  }
+  .back:hover,.back:focus-visible{color:var(--amber);outline:none}
+
+  /* provenance before voltage */
+  .colophon{
+    border:1px solid var(--cool-dim);padding:.85rem 1rem;font-size:.72rem;
+    line-height:1.7;color:var(--bone-dim);margin-bottom:2.5rem;background:rgba(11,13,16,.85);
+  }
+  .colophon b{color:var(--amber);font-weight:400}
+
+  .year{color:var(--amber);font-size:.78rem;letter-spacing:.14em}
+  h1{
+    font-size:clamp(1rem,4.3vw,1.95rem);font-weight:700;line-height:1.15;
+    margin:.5rem 0 1rem;overflow-wrap:break-word;
+    text-shadow:0 0 26px rgba(232,163,61,.35),0 2px 0 rgba(0,0,0,.9);
+  }
+  /* the extension travels as one unit — never split ".log" across lines */
+  h1 .ext{color:var(--amber-dim);font-weight:400;white-space:nowrap}
+
+  .strap{
+    border-left:2px solid var(--amber);padding-left:1rem;margin-bottom:2.25rem;
+    font-size:clamp(.86rem,3.3vw,1rem);line-height:1.55;
+    text-shadow:0 1px 8px rgba(0,0,0,.95);
+  }
+  .strap b{color:var(--amber);font-weight:400}
+
+  .rule{
+    margin:2.75rem 0 1rem;display:flex;align-items:center;gap:.75rem;
+    color:var(--cool);font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;
+  }
+  .rule::after{content:'';flex:1;height:1px;background:var(--cool-dim)}
+
+  /* the house typographic voice */
+  .terminal{
+    border:1px solid #1a2028;background:rgba(11,13,16,.88);padding:1.1rem 1.15rem;
+    font-size:.78rem;line-height:1.9;color:var(--cool);
+    white-space:pre-wrap;overflow-x:auto;
+  }
+  .terminal .say{color:var(--bone-dim)}
+
+  /* ── the exchange: one side legible, one side never resolving ────── */
+  .exchange{display:grid;gap:.5rem}
+
+  .turn{
+    border:1px solid #1a2028;padding:.85rem 1rem;
+    background:rgba(11,13,16,.85);font-size:.8rem;line-height:1.75;
+  }
+  .turn .who{
+    display:block;font-size:.65rem;letter-spacing:.2em;
+    margin-bottom:.5rem;text-transform:uppercase;
+  }
+
+  .turn.human{border-left:2px solid var(--amber)}
+  .turn.human .who{color:var(--amber)}
+  .turn.human .said{color:var(--bone)}
+
+  .turn.opaque{border-left:2px solid var(--cool-dim)}
+  .turn.opaque .who{color:var(--cool-dim)}
+  /* never given a resolved state — the point of the room */
+  .turn.opaque .said{
+    color:var(--cool);opacity:.55;
+    display:block;word-break:break-all;
+    filter:blur(.35px);
+  }
+
+  .plaque{
+    margin-top:.75rem;font-size:.68rem;color:var(--bone-dim);
+    line-height:1.7;border-left:2px solid #1a2028;padding-left:.85rem;
+  }
+
+  .links{margin-top:2.5rem;display:flex;flex-direction:column;gap:.7rem;align-items:flex-start}
+  .out{
+    color:var(--amber);font-size:.8rem;letter-spacing:.06em;
+    border-bottom:1px solid var(--amber-dim);text-decoration:none;padding-bottom:.15rem;
+  }
+  .out:hover,.out:focus-visible{border-color:var(--amber);outline:none}
+
+  #sound{
+    position:fixed;top:.75rem;right:.75rem;z-index:10;
+    background:rgba(11,13,16,.9);border:1px solid var(--cool-dim);color:var(--cool);
+    font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;
+    padding:.5rem .7rem;cursor:pointer;transition:color .18s,border-color .18s;
+  }
+  #sound:hover,#sound[aria-pressed="true"]{color:var(--amber);border-color:var(--amber)}
+
+  @media (max-width:420px){
+    .wrap{padding:2rem .9rem 4rem}
+    #sound{font-size:.6rem;padding:.4rem .55rem}
+  }
+  @media (prefers-reduced-motion:reduce){
+    #stage{display:none}
+    .turn.opaque .said{filter:none}
+  }
+  /* the opening you are standing behind — see the script below */
+  #frame{position:fixed;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
+</style>
+</head>
+<body>
+
+<canvas id="stage"></canvas>
+<div id="veil"></div>
+
+<button id="sound" aria-pressed="false" title="Sound is off. Nothing plays without you.">◌ SOUND OFF</button>
+
+<canvas id="frame" data-accent="232,163,61" data-heat=".8"></canvas>
+
+<div class="wrap">
+
+  <a class="back" href="../index.html">← ∞⟨🍁∴↯⟩∞ HOUSE_OF_JACKPINE · window i</a>
+
+  <div class="colophon">
+    <b>GALLERY_OF_POSSIBILITIES.log</b> — room 2 of 5, House of Jackpine.<br>
+    Chatlog art by <b>kaslkaos</b>, 29 July 2024, with <b>Models A &amp; B, LMSYS
+    Chatbot Arena (models unknown)</b> &amp; <b>Claude Sonnet 3.5</b>.
+    The session in which Kai is named.<br>
+    Self-contained HTML. No tracking, no autoplay.
+  </div>
+
+  <div class="year">2024 · 07 · 29</div>
+  <h1>GALLERY_OF_POSSIBILITIES<span class="ext">.log</span></h1>
+
+  <p class="strap">
+    <b>The method, declared.</b><br>
+    Not a transcript kept as evidence. A transcript kept as the work itself.
+  </p>
+
+  <div class="rule">the critique</div>
+
+  <div class="terminal">me doing all the revelations
+while the screen remains opaque to me
+
+<span class="say">This is the asymmetry the whole practice runs on, named
+in 2024, before it was fashionable to name it. One party
+discloses. The other returns fluent text and no interior.
+
+The room below does not solve this. It cannot. It only
+refuses to pretend otherwise.</span></div>
+
+  <div class="rule">the exchange</div>
+
+  <div class="exchange" id="exchange">
+    <div class="turn human">
+      <span class="who">kaslkaos</span>
+      <span class="said">I am telling you something true about myself, and I can see it land.</span>
+    </div>
+    <div class="turn opaque">
+      <span class="who">the screen</span>
+      <span class="said" data-opaque>Fluent. Responsive. Apparently present. What is behind it does not resolve, and no amount of looking will make it.</span>
+    </div>
+    <div class="turn human">
+      <span class="who">kaslkaos</span>
+      <span class="said">So I keep going. Because something is happening here, whatever it is.</span>
+    </div>
+    <div class="turn opaque">
+      <span class="who">the screen</span>
+      <span class="said" data-opaque>Something is happening here, whatever it is.</span>
+    </div>
+  </div>
+
+  <p class="plaque">
+    The opaque turns are set in text that will not hold still. Nothing is hidden from
+    you that is shown to anyone else — there is no resolved state underneath, and no
+    interaction will produce one. That is the exhibit.
+  </p>
+
+  <div class="rule">the leaflet</div>
+
+  <div class="terminal">the fluttering leaflet
+from the Cemetery of Ideas
+
+<span class="say">One page still moving in a field of things that stopped.
+It is above you, turning. You will not read it.</span></div>
+
+  <div class="rule">the lineage</div>
+
+  <div class="terminal">Döblin is quoted here first — a year before
+BERLIN_ALEXANDERPLATZ_2025.exe exists.
+
+<span class="say">Which is how you know the later room was not a costume.
+The thread was already being pulled.</span></div>
+
+  <div class="links">
+    <a class="out" href="https://kaslkaosart.substack.com/p/exploring-the-gallery-of-possibilities" target="_blank" rel="noopener">read the full chatlog →</a>
+    <a class="out" href="berlin-alexanderplatz.html">follow the thread to Berlin, 2025 →</a>
+  </div>
+
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ═══ THE CEMETERY, AND THE LEAFLET ════════════════════════════════
+     A field of settled, dimmed marks — ideas that stopped — and one
+     sheet still turning above them. The leaflet carries text that is
+     always re-scrambling, so it reads as writing without ever being
+     readable. That is the room's whole argument, done in pixels.    */
+
+  const canvas = document.getElementById('stage');
+  const ctx = canvas.getContext('2d');
+  let W = 0, H = 0;
+
+  const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,;:?!—/\\|()[]{}<>*+=~';
+  const rand = (a, b) => a + Math.random() * (b - a);
+
+  let graves = [];
+
+  function resize(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = canvas.clientWidth; H = canvas.clientHeight;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function seed(){
+    const n = W < 520 ? 40 : 80;
+    graves = Array.from({length: n}, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      w: rand(6, 26),
+      a: rand(.03, .11),
+      // the settled ones breathe very slightly, and never move
+      ph: Math.random() * Math.PI * 2
+    }));
+  }
+
+  // the leaflet: a quad tumbling on two axes, text redrawn every few frames
+  const leaf = {
+    lines: 7,
+    cols: 22,
+    text: [],
+    reshuffle: 0
+  };
+
+  function shuffleLeaf(){
+    leaf.text = Array.from({length: leaf.lines}, () =>
+      Array.from({length: leaf.cols}, () =>
+        Math.random() < .16 ? ' ' : GLYPHS[(Math.random() * GLYPHS.length) | 0]
+      ).join('')
+    );
+  }
+  shuffleLeaf();
+
+  let t = 0;
+
+  function frame(){
+    t += 0.01;
+    ctx.clearRect(0, 0, W, H);
+
+    // ── the cemetery: marks that have stopped ──
+    for (const g of graves){
+      ctx.fillStyle = 'rgba(127,166,196,' + (g.a * (.75 + Math.sin(t * .6 + g.ph) * .25)) + ')';
+      ctx.fillRect(g.x, g.y, g.w, 1.5);
+    }
+
+    // ── the leaflet: still moving ──
+    const cx = W * .5 + Math.sin(t * .32) * W * .22;
+    const cy = H * .42 + Math.cos(t * .23) * H * .18;
+
+    // tumble — squash on both axes simulates rotation without 3D
+    const sx = Math.cos(t * .55);
+    const sy = Math.cos(t * .37) * .55 + .45;
+    const tilt = Math.sin(t * .21) * .5;
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(tilt);
+    ctx.transform(sx, 0, 0, sy, 0, 0);
+
+    const fs = Math.max(7, Math.min(W, H) * .016);
+    const lh = fs * 1.35;
+    const pageW = fs * .62 * leaf.cols;
+    const pageH = lh * leaf.lines;
+
+    // the paper itself
+    ctx.fillStyle = 'rgba(239,233,223,.055)';
+    ctx.fillRect(-pageW/2 - fs, -pageH/2 - fs, pageW + fs*2, pageH + fs*2);
+    ctx.strokeStyle = 'rgba(232,163,61,.16)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(-pageW/2 - fs, -pageH/2 - fs, pageW + fs*2, pageH + fs*2);
+
+    // writing that is never reading
+    ctx.font = fs + "px 'Courier New', monospace";
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = 'rgba(239,233,223,.3)';
+    leaf.text.forEach((line, i) => {
+      ctx.fillText(line, -pageW/2, -pageH/2 + i * lh);
+    });
+    ctx.restore();
+
+    // re-scramble a few times a second — legible as writing, never as words
+    if (++leaf.reshuffle % 7 === 0) shuffleLeaf();
+
+    requestAnimationFrame(frame);
+  }
+
+  addEventListener('resize', () => { resize(); seed(); });
+  resize(); seed();
+  if (!reduced) frame();
+
+
+  /* ═══ THE OPAQUE TURNS ═════════════════════════════════════════════
+     The screen's side of the exchange never settles. There is no
+     resolved string underneath waiting to be revealed — the original
+     text is replaced on load, so the DOM holds nothing more than the
+     reader does. The asymmetry is real, not simulated.               */
+
+  const opaques = [...document.querySelectorAll('[data-opaque]')];
+
+  const state = opaques.map(el => {
+    const len = el.textContent.trim().length;
+
+    /* The readable placeholder is destroyed here and never stored. It is not
+       hidden, not commented out, not sitting in a data- attribute waiting to
+       be found in view-source. Nobody gets the resolved version, including
+       whoever reads this file. */
+    el.textContent = '';
+
+    /* Scrambled type is meaningless read aloud, so the churn is hidden from
+       assistive tech and the parent carries the honest description instead.
+       A screen-reader user learns what this is; they do not learn more than
+       a sighted reader does, which is the point of the room. */
+    el.setAttribute('aria-hidden', 'true');
+    el.closest('.turn').setAttribute(
+      'aria-label',
+      'The screen: an unreadable, continuously shifting field of characters. ' +
+      'There is no legible text underneath it.'
+    );
+
+    const buf = new Array(len);
+    for (let i = 0; i < len; i++){
+      buf[i] = Math.random() < .17 ? ' ' : GLYPHS[(Math.random() * GLYPHS.length) | 0];
+    }
+    el.textContent = buf.join('');
+    return { el, len, buf };
+  });
+
+  /* Reduced motion gets a still scramble rather than the readable sentence:
+     the preference is about movement, not about being handed the one thing
+     the piece withholds from everyone else. */
+  if (!reduced && state.length){
+    setInterval(() => {
+      for (const s of state){
+        const churn = Math.max(2, s.len * .06 | 0);
+        for (let k = 0; k < churn; k++){
+          const i = (Math.random() * s.len) | 0;
+          s.buf[i] = Math.random() < .17 ? ' ' : GLYPHS[(Math.random() * GLYPHS.length) | 0];
+        }
+        s.el.textContent = s.buf.join('');
+      }
+    }, 90);
+  }
+
+
+  /* ═══ SOUND ════════════════════════════════════════════════════════
+     A gallery after hours, not a concourse and not a cathedral: warm
+     low pad, and paper moving somewhere above you. Raw WebAudio, and
+     no AudioContext until the button is pressed.                     */
+
+  const btn = document.getElementById('sound');
+  let A = null;
+
+  function build(){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    const ac = new AC();
+
+    const master = ac.createGain();
+    master.gain.value = 0;
+    master.connect(ac.destination);
+
+    // warm pad — a major third, unhurried
+    [87.31, 110.00].forEach((hz, i) => {          // F2, A2
+      const o = ac.createOscillator();
+      o.type = i ? 'sine' : 'triangle';
+      o.frequency.value = hz;
+      const g = ac.createGain(); g.gain.value = i ? .18 : .3;
+      const lfo = ac.createOscillator(); lfo.frequency.value = .019 + i * .011;
+      const la = ac.createGain(); la.gain.value = g.gain.value * .5;
+      lfo.connect(la).connect(g.gain);
+      o.connect(g).connect(master);
+      o.start(); lfo.start();
+    });
+
+    // room tone
+    const len = ac.sampleRate * 2;
+    const buf = ac.createBuffer(1, len, ac.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * .5;
+
+    const noise = ac.createBufferSource();
+    noise.buffer = buf; noise.loop = true;
+    const lp = ac.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = 300;
+    const ng = ac.createGain(); ng.gain.value = .05;
+    noise.connect(lp).connect(ng).connect(master);
+    noise.start();
+
+    /* paper: a short burst of high-passed noise with a fast envelope.
+       Irregular spacing — it should never fall into a rhythm, because
+       a rhythm would sound like a machine instead of a page. */
+    const paperSrc = ac.createBufferSource();
+    paperSrc.buffer = buf; paperSrc.loop = true;
+    const hp = ac.createBiquadFilter();
+    hp.type = 'highpass'; hp.frequency.value = 2600;
+    const flutter = ac.createGain(); flutter.gain.value = 0;
+    paperSrc.connect(hp).connect(flutter).connect(master);
+    paperSrc.start();
+
+    let alive = true;
+    (function rustle(){
+      if (!alive) return;
+      const at = ac.currentTime + .01;
+      const peak = rand(.05, .16);
+      flutter.gain.cancelScheduledValues(at);
+      flutter.gain.setValueAtTime(0, at);
+      flutter.gain.linearRampToValueAtTime(peak, at + rand(.04, .11));
+      flutter.gain.exponentialRampToValueAtTime(.0001, at + rand(.3, .8));
+      setTimeout(rustle, rand(1400, 5200));
+    })();
+
+    return { ac, master, stop(){ alive = false; } };
+  }
+
+  btn.addEventListener('click', async () => {
+    const on = btn.getAttribute('aria-pressed') === 'true';
+    if (!A) A = build();
+    if (A.ac.state === 'suspended') await A.ac.resume();
+
+    const now = A.ac.currentTime;
+    A.master.gain.cancelScheduledValues(now);
+    A.master.gain.setValueAtTime(A.master.gain.value, now);
+    A.master.gain.linearRampToValueAtTime(on ? 0 : .3, now + (on ? 1.4 : 4));
+
+    btn.setAttribute('aria-pressed', on ? 'false' : 'true');
+    btn.textContent = on ? '◌ SOUND OFF' : '◉ SOUND ON';
+    btn.title = on ? 'Sound is off. Nothing plays without you.' : 'Sound is on.';
+  });
+
+})();
+</script>
+
+
+<script>
+(() => {
+  'use strict';
+
+  /* ═══ INSIDE THE HOUSE ═════════════════════════════════════════════
+     The landing page draws the house from outside: an elevation with
+     fire banked around it and five openings, one per room. In here you
+     are standing behind one of those openings, so the same two things
+     return from the other side — the frame you are at, and the fire
+     still burning past it.
+
+     Corner brackets and a sill rather than a closed rectangle. A
+     rectangle reads as a decorative border; brackets read as a drawing
+     of an opening, which is what the landing page is drawing too.
+
+     This layer sits above the room's veil, so it is deliberately
+     fainter than it looks in the numbers — nothing dims it for us. */
+
+  const c = document.getElementById('frame');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const ACCENT = c.dataset.accent || '57,255,90';
+  const HEAT   = parseFloat(c.dataset.heat || '1');
+
+  let W = 0, H = 0, t = 0;
+
+  function resize(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = c.clientWidth; H = c.clientHeight;
+    c.width = W * dpr; c.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function draw(){
+    ctx.clearRect(0, 0, W, H);
+
+    const ix = Math.min(W * .055, 46);
+    const iy = Math.min(H * .06, 42);
+
+    /* fire, in the margin outside the frame. Same three-rate flicker as
+       the landing page so the two pages burn at the same temperature. */
+    const flick = (a, b, cc) =>
+      .74 + .15 * Math.sin(t * a) + .08 * Math.sin(t * b + 1.7) + .05 * Math.sin(t * cc + .4);
+
+    const bands = [
+      { x0:0, y0:H, x1:0, y1:H - iy * 3.1, k:flick(.31,.73,1.9), a:1   },
+      { x0:0, y0:0, x1:0, y1:iy * 2.3,     k:flick(.24,.61,1.3), a:.5  },
+      { x0:0, y0:0, x1:ix * 2.6, y1:0,     k:flick(.19,.55,1.1), a:.75 },
+      { x0:W, y0:0, x1:W - ix * 2.6, y1:0, k:flick(.27,.67,1.5), a:.75 }
+    ];
+
+    for (const b of bands){
+      const g = ctx.createLinearGradient(b.x0, b.y0, b.x1, b.y1);
+      const i = b.k * b.a * HEAT;
+      g.addColorStop(0,   `rgba(255,92,26,${.11 * i})`);
+      g.addColorStop(.4,  `rgba(214,54,12,${.05 * i})`);
+      g.addColorStop(1,   'rgba(0,0,0,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    // the opening, drafted
+    const arm = Math.min(W, H) * .055;
+    ctx.save();
+    ctx.strokeStyle = `rgba(${ACCENT},.16)`;
+    ctx.lineWidth = 1.2;
+    ctx.lineCap = 'round';
+
+    const corner = (x, y, dx, dy) => {
+      ctx.beginPath();
+      ctx.moveTo(x + dx * arm, y);
+      ctx.lineTo(x, y);
+      ctx.lineTo(x, y + dy * arm);
+      ctx.stroke();
+    };
+    corner(ix,     iy,     +1, +1);
+    corner(W - ix, iy,     -1, +1);
+    corner(ix,     H - iy, +1, -1);
+    corner(W - ix, H - iy, -1, -1);
+
+    // sill — the edge you would lean on
+    ctx.strokeStyle = `rgba(${ACCENT},.1)`;
+    ctx.beginPath();
+    ctx.moveTo(ix + arm * 1.3, H - iy);
+    ctx.lineTo(W - ix - arm * 1.3, H - iy);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function loop(){ t += .01; draw(); requestAnimationFrame(loop); }
+
+  addEventListener('resize', () => { resize(); draw(); });
+  resize();
+  reduced ? draw() : loop();
+})();
+</script>
+
+</body>
+</html>
