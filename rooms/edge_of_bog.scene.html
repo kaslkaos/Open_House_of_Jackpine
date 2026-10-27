@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>edge_of_bog.scene</title>
+<!-- WAG, the scene. Words written by hand by kaslkaos; turned into code and SVG
+     with Claude Opus 5.5, October 2026. Kept here exactly as made, with two
+     changes for the portal: no web font (so nothing is fetched from anyone),
+     and a faint way back to the room when the scene is opened on its own. -->
+<style>
+  html,body{margin:0;height:100%;background:#000;overflow:hidden;cursor:none}
+  #stage{position:absolute;left:50%;top:50%;width:1600px;height:1000px;transform-origin:0 0;isolation:isolate;overflow:hidden;background:#000}
+  #scene{position:absolute;inset:0;display:block}
+  #tint{position:absolute;inset:0;pointer-events:none;mix-blend-mode:color;opacity:.45;
+        background:linear-gradient(180deg,#1d3f7a 0%,#3a4f86 50%,#1f5a50 57%,#2c6a4a 80%,#1c4a3a 100%);
+        transition:opacity 4s ease}
+  #text{position:absolute;inset:0;font-family:'IBM Plex Mono',ui-monospace,'DejaVu Sans Mono','Courier New',monospace;font-size:18px;line-height:20px;color:#dcdddd;
+        text-shadow:0 0 6px rgba(0,0,0,.7),0 0 1px rgba(0,0,0,.9)}
+  .ln{position:absolute;white-space:pre;transition:opacity .15s}
+  .ln.reset{color:#eef0ee}
+  .cmt{opacity:0;transition:opacity .25s}
+  .cmt.on{opacity:1}
+  .cur{display:inline-block;width:.62em;height:1.05em;vertical-align:-0.18em;background:#dcdddd;margin-left:1px;animation:blink 1s steps(1) infinite}
+  .cur.frozen{animation:none}
+  @keyframes blink{50%{opacity:0}}
+  #glitch{position:absolute;inset:0;pointer-events:none}
+  .band{position:absolute;left:0;width:1600px}
+  #black{position:absolute;inset:0;background:#000;opacity:1;pointer-events:none;transition:opacity 3s ease}
+  #fogdrift{animation:drift 140s ease-in-out infinite alternate}
+  #fogdrift2{animation:drift2 90s ease-in-out infinite alternate}
+  @keyframes drift{from{transform:translateX(0)}to{transform:translateX(900px)}}
+  @keyframes drift2{from{transform:translateX(0)}to{transform:translateX(-500px)}}
+  #dogMove{transition:transform 7s cubic-bezier(.4,0,.2,1);transform-box:fill-box;transform-origin:50% 100%}
+  #dogBody,#eyes,#eyesRefl,#ghostL,#ghostR{transition:opacity 1.2s ease}
+  .px{opacity:0;transition:opacity .35s steps(2)}
+  .px.on{opacity:1}
+
+  /* the way back — only when the scene stands alone, and only when looked for */
+  #away{
+    position:fixed;left:.9rem;bottom:.8rem;z-index:5;display:none;
+    font:12px 'Courier New',ui-monospace,monospace;letter-spacing:.14em;
+    color:#8d8f92;text-decoration:none;opacity:0;transition:opacity 1.2s ease;cursor:pointer;
+  }
+  #away.on{opacity:.7}
+  #away:hover,#away:focus-within{opacity:1}
+  #away a{color:inherit;text-decoration:none;outline:none}
+  #away a:hover,#away a:focus-visible{color:#eef0ee}
+</style>
+</head>
+<body>
+<div id="away"><a href="wag.html">← wag</a> · <a href="../index.html">∞⟨🍁∴↯⟩∞ portal</a></div>
+<div id="stage">
+<svg id="scene" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#16171a"/><stop offset="0.55" stop-color="#2b2c30"/><stop offset="1" stop-color="#3b3c3f"/>
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#34353a"/><stop offset="0.35" stop-color="#232428"/><stop offset="1" stop-color="#0e0f11"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1d1e21"/><stop offset="1" stop-color="#0b0b0d"/>
+    </linearGradient>
+    <radialGradient id="eyeglow">
+      <stop offset="0" stop-color="#e9ece6" stop-opacity="0.55"/><stop offset="1" stop-color="#e9ece6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="vig" cx="0.5" cy="0.52" r="0.75">
+      <stop offset="0.55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="0.7"/>
+    </radialGradient>
+    <filter id="fog" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.0035 0.018" numOctaves="4" seed="7"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.62  0 0 0 0 0.63  0 0 0 0 0.64  0 0 0 1.4 -0.55"/>
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" stitchTiles="stitch"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.09 0"/>
+    </filter>
+    <filter id="shadowbody" x="-40%" y="-40%" width="180%" height="180%">
+      <feTurbulence id="sbTurb" type="fractalNoise" baseFrequency="0.035" numOctaves="3" seed="11" result="n"/>
+      <feDisplacementMap id="sbDisp" in="SourceGraphic" in2="n" scale="34" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="10"/>
+    </filter>
+    <filter id="soft"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="softer" x="-20%" y="-100%" width="140%" height="300%"><feGaussianBlur stdDeviation="14"/></filter>
+    <filter id="ripple" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.002 0.09" numOctaves="2" seed="5"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.55  0 0 0 0 0.56  0 0 0 0 0.58  0 0 0 1.1 -0.6"/>
+    </filter>
+    <g id="pad">
+      <path d="M0,0 m-40,0 a40,11 0 1,0 80,0 a40,11 0 0,0 -36,-10 l-4,10 z" fill="#3a3b3f"/>
+      <path d="M-40,0 a40,11 0 0,0 80,0" fill="none" stroke="#2a2b2e" stroke-width="2"/>
+    </g>
+    <g id="dogshape">
+      <path d="M-95,-10 L40,-14 Q52,-14 54,-4 L56,40 L44,40 L42,8 L-60,10 L-62,44 L-74,44 L-76,8 Q-98,4 -95,-10 Z"/>
+      <path d="M30,-14 L34,-58 Q36,-74 54,-76 L84,-74 Q98,-70 100,-58 L104,-44 Q102,-34 88,-34 L60,-30 L56,-6 Z"/>
+      <path d="M40,-70 L32,-92 L50,-74 Z"/>
+      <path d="M80,-74 L98,-90 L92,-68 Z"/>
+    </g>
+  </defs>
+
+  <!-- SKY -->
+  <rect width="1600" height="600" fill="url(#sky)"/>
+  <rect id="skybreath" width="1600" height="600" fill="#55565a" opacity="0"/>
+  <g id="fogdrift"><rect id="fogrect" x="-1000" width="3600" height="600" filter="url(#fog)" opacity="0.5"/></g>
+
+  <path d="M0,560 L0,540 Q60,528 110,536 L140,520 L170,534 Q260,522 330,532 L360,512 L385,530 Q520,520 640,530 Q700,518 760,528 L790,515 L815,529 Q960,522 1080,531 L1110,514 L1130,530 Q1280,520 1400,528 L1430,511 L1455,528 Q1530,522 1600,530 L1600,560 Z"
+        fill="#26272a" filter="url(#softer)"/>
+
+  <!-- WATER -->
+  <rect y="555" width="1600" height="445" fill="url(#water)"/>
+  <rect y="555" width="1600" height="200" fill="#3b3c3f" opacity="0.25" filter="url(#softer)"/>
+  <g id="fogdrift2"><rect x="0" y="560" width="2200" height="440" filter="url(#ripple)" opacity="0.18"/></g>
+
+  <ellipse id="lowfog1" cx="500" cy="585" rx="700" ry="38" fill="#4a4b4f" opacity="0.35" filter="url(#softer)"/>
+  <ellipse id="lowfog2" cx="1250" cy="600" rx="520" ry="30" fill="#4a4b4f" opacity="0.3" filter="url(#softer)"/>
+
+  <!-- LILIES -->
+  <g id="pads">
+    <g opacity="0.55"><use href="#pad" transform="translate(300,640) scale(0.55)"/><use href="#pad" transform="translate(370,652) scale(0.45)"/>
+      <use href="#pad" transform="translate(980,628) scale(0.4)"/><use href="#pad" transform="translate(1060,640) scale(0.5)"/></g>
+    <g opacity="0.75"><use href="#pad" transform="translate(180,720) scale(0.9)"/><use href="#pad" transform="translate(620,700) scale(0.75)"/>
+      <use href="#pad" transform="translate(1320,710) scale(0.85)"/><use href="#pad" transform="translate(1440,735) scale(0.7)"/></g>
+    <g><use href="#pad" transform="translate(420,830) scale(1.5)"/><use href="#pad" transform="translate(560,868) scale(1.2)"/>
+      <use href="#pad" transform="translate(1150,850) scale(1.6)"/><use href="#pad" transform="translate(1000,905) scale(1.1)"/>
+      <use href="#pad" transform="translate(150,920) scale(1.3)"/></g>
+
+    <!-- grey lilies blossom in pixels -->
+    <g fill="#8d8f92">
+      <g transform="translate(422,824) scale(1.6)">
+        <rect class="px" x="-12" y="-24" width="8" height="8"/><rect class="px" x="-4" y="-32" width="8" height="8"/><rect class="px" x="4" y="-24" width="8" height="8"/>
+        <rect class="px" x="-20" y="-16" width="8" height="8"/><rect class="px" x="-12" y="-16" width="8" height="8" fill="#a9abad"/><rect class="px" x="-4" y="-24" width="8" height="8" fill="#b4b6b8"/><rect class="px" x="4" y="-16" width="8" height="8" fill="#a9abad"/><rect class="px" x="12" y="-16" width="8" height="8"/>
+        <rect class="px" x="-12" y="-8" width="8" height="8" fill="#6f7174"/><rect class="px" x="-4" y="-16" width="8" height="8" fill="#c3c5c6"/><rect class="px" x="4" y="-8" width="8" height="8" fill="#6f7174"/><rect class="px" x="-4" y="-8" width="8" height="8" fill="#9a9c9f"/>
+      </g>
+      <g transform="translate(1150,844) scale(1.6)">
+        <rect class="px" x="-4" y="-32" width="8" height="8"/><rect class="px" x="-12" y="-16" width="8" height="8" fill="#a9abad"/><rect class="px" x="4" y="-24" width="8" height="8" style="--o:.6"/>
+        <rect class="px" x="-4" y="-16" width="8" height="8" fill="#c3c5c6"/><rect class="px" x="12" y="-16" width="8" height="8"/><rect class="px" x="-4" y="-8" width="8" height="8" fill="#6f7174"/>
+      </g>
+      <g transform="translate(620,698) scale(1.5)">
+        <rect class="px" x="-3" y="-12" width="5" height="5" fill="#b4b6b8"/><rect class="px" x="2" y="-7" width="5" height="5"/>
+      </g>
+      <g transform="translate(1320,708) scale(1.5)">
+        <rect class="px" x="-3" y="-7" width="5" height="5"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- THE DOG -->
+  <g transform="translate(634,494)">
+    <g id="dogMove">
+      <g id="dogBody" opacity="0">
+        <g filter="url(#shadowbody)" fill="#16171a" opacity="0.8">
+          <use href="#dogshape"/>
+          <g id="tail"><path d="M-92,-8 Q-120,-30 -128,-58 Q-122,-56 -112,-34 Q-102,-18 -86,-14 Z"/></g>
+        </g>
+        <g filter="url(#shadowbody)" fill="#121315" opacity="0.35" transform="translate(0,96) scale(1,-0.55)">
+          <use href="#dogshape"/>
+        </g>
+      </g>
+      <g id="eyes" opacity="0">
+        <circle cx="58" cy="-56" r="22" fill="url(#eyeglow)"/>
+        <circle cx="86" cy="-55" r="22" fill="url(#eyeglow)"/>
+        <ellipse class="eye" cx="58" cy="-56" rx="4.2" ry="3.4" fill="#eef1ec"/>
+        <ellipse class="eye" cx="86" cy="-55" rx="4.2" ry="3.4" fill="#eef1ec"/>
+      </g>
+      <g id="eyesRefl" opacity="0">
+        <ellipse cx="58" cy="128" rx="4" ry="1.6" fill="#d9ddd7" opacity="0.4" filter="url(#soft)"/>
+        <ellipse cx="86" cy="127" rx="4" ry="1.6" fill="#d9ddd7" opacity="0.4" filter="url(#soft)"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- residue of earlier RESETs -->
+  <g id="ghostL" opacity="0">
+    <circle cx="321" cy="476" r="16" fill="url(#eyeglow)"/>
+    <ellipse class="eye" cx="312" cy="476" rx="2.6" ry="2" fill="#e9ece6"/>
+    <ellipse class="eye" cx="331" cy="477" rx="2.6" ry="2" fill="#e9ece6"/>
+  </g>
+  <g id="ghostR" opacity="0">
+    <circle cx="1392" cy="488" r="14" fill="url(#eyeglow)"/>
+    <ellipse class="eye" cx="1384" cy="488" rx="2.2" ry="1.7" fill="#e9ece6"/>
+    <ellipse class="eye" cx="1400" cy="489" rx="2.2" ry="1.7" fill="#e9ece6"/>
+  </g>
+
+  <!-- near bank, reeds -->
+  <path d="M0,1000 L0,955 Q120,938 260,950 Q380,962 470,1000 Z" fill="url(#ground)"/>
+  <path d="M1600,1000 L1600,940 Q1480,930 1380,950 Q1280,972 1230,1000 Z" fill="url(#ground)"/>
+  <g stroke="#0c0c0e" stroke-width="3" fill="none" stroke-linecap="round">
+    <path d="M40,1000 Q44,900 30,820"/><path d="M62,1000 Q70,910 92,850"/><path d="M90,1000 Q86,930 70,880"/>
+    <path d="M128,1000 Q140,920 162,880"/><path d="M180,1000 Q176,940 190,905"/><path d="M14,1000 Q10,920 -4,870"/>
+    <path d="M1560,1000 Q1556,890 1574,810"/><path d="M1530,1000 Q1520,910 1496,860"/><path d="M1500,1000 Q1504,930 1520,890"/>
+    <path d="M1470,1000 Q1462,940 1440,910"/><path d="M1590,1000 Q1592,930 1606,880"/>
+  </g>
+  <g fill="#0c0c0e"><ellipse cx="30" cy="830" rx="5" ry="22"/><ellipse cx="1574" cy="820" rx="5" ry="22"/><ellipse cx="92" cy="858" rx="4" ry="16"/></g>
+
+  <!-- RESET seams -->
+  <g id="seam1" opacity="0.5" transform="translate(0,318)">
+    <rect x="0" y="0" width="1600" height="3" fill="#3f4044"/><rect x="0" y="3" width="1600" height="1" fill="#141518"/>
+  </g>
+  <g id="seam2" opacity="0.5" transform="translate(0,742)"><rect x="0" y="0" width="1600" height="2" fill="#2e2f33"/></g>
+  <g id="seam3" opacity="0.35" transform="translate(0,566)">
+    <rect x="610" y="0" width="540" height="6" fill="#3d3e42"/><rect x="1190" y="0" width="160" height="6" fill="#28292c"/>
+  </g>
+
+  <rect width="1600" height="1000" fill="url(#vig)"/>
+  <rect width="1600" height="1000" filter="url(#grain)"/>
+</svg>
+<div id="tint"></div>
+<div id="text"></div>
+<div id="glitch"></div>
+<div id="black"></div>
+</div>
+
+<script>
+/* ---------- the way back: standalone only, appears when the hand moves ---------- */
+(()=>{
+  let framed=true; try{framed=window.self!==window.top}catch(e){}
+  if(framed) return;
+  const a=document.getElementById('away');a.style.display='block';
+  let hide=0;
+  const wake=()=>{a.classList.add('on');document.body.style.cursor='default';
+    clearTimeout(hide);hide=setTimeout(()=>{a.classList.remove('on');document.body.style.cursor='none'},2600);};
+  addEventListener('pointermove',wake);addEventListener('keydown',wake);
+})();
+
+/* ---------- stage fit ---------- */
+const stage=document.getElementById('stage');
+function fit(){const s=Math.min(innerWidth/1600,innerHeight/1000);
+  stage.style.transform=`translate(${-800*s}px,${-500*s}px) scale(${s})`;}
+addEventListener('resize',fit);fit();
+
+const $=id=>document.getElementById(id);
+const textEl=$('text'), glitchEl=$('glitch'), blackEl=$('black');
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const rnd=(a,b)=>a+Math.random()*(b-a);
+
+/* ---------- continuous life ---------- */
+const S={bob:1, breath:0, wag:0, waver:1, blinkMain:true, t0:performance.now()};
+const pads=$('pads'), tail=$('tail'), sbDisp=$('sbDisp'), skyb=$('skybreath');
+let nextBlink=performance.now()+3000;
+function eyesSet(sel,ry){document.querySelectorAll(sel).forEach(e=>e.setAttribute('ry',ry))}
+function loop(now){
+  const t=(now-S.t0)/1000;
+  pads.setAttribute('transform',`translate(0,${(Math.sin(t*0.9)*2.2*S.bob).toFixed(2)})`);
+  skyb.setAttribute('opacity',(S.breath*(0.06+0.06*Math.sin(t*0.35))).toFixed(3));
+  if(S.wag) tail.setAttribute('transform',`rotate(${(Math.sin(t*9)*16*S.wag).toFixed(2)} -88 -12)`);
+  sbDisp.setAttribute('scale',(30+8*Math.sin(t*0.7)*S.waver).toFixed(1));
+  if(now>nextBlink){ // blink: eyes bright, blinking
+    eyesSet('#eyes .eye',0.4);eyesSet('#ghostL .eye',0.3);eyesSet('#ghostR .eye',0.3);
+    setTimeout(()=>{eyesSet('#eyes .eye',3.4);eyesSet('#ghostL .eye',2);eyesSet('#ghostR .eye',1.7)},130);
+    nextBlink=now+rnd(2500,6500);
+  }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+/* ---------- text ---------- */
+const LX=58, RX=901.6, LY=43, RY=18, LH=29.35;
+const cursor=document.createElement('span');cursor.className='cur';
+function line(col,i,cls){
+  const d=document.createElement('div');d.className='ln'+(cls?' '+cls:'');
+  d.style.left=(col==='L'?LX:RX)+'px';d.style.top=((col==='L'?LY:RY)+i*LH-15)+'px';
+  const t=document.createElement('span');d.appendChild(t);
+  textEl.appendChild(d);return {d,t};
+}
+async function type(col,i,str,opt={}){
+  const {d,t}=line(col,i,opt.cls);
+  const sp=opt.speed||38; let delay=sp;
+  cursor.classList.remove('frozen'); d.appendChild(cursor);
+  for(let k=0;k<str.length;k++){
+    t.textContent+=str[k];
+    if(opt.accel) delay=Math.max(6,delay*opt.accel);
+    await sleep(str[k]===' '?delay*0.6:delay*rnd(0.7,1.4));
+  }
+  if(opt.cmt){ // logged: appears whole, nobody types it
+    const pad=' '.repeat(Math.max(1,(opt.col||33)-str.length));
+    const c=document.createElement('span');c.className='cmt';c.textContent=pad+opt.cmt;
+    d.insertBefore(c,cursor);await sleep(30);c.classList.add('on');
+  }
+  return d;
+}
+function stamp(col,i,str,cls){const {d,t}=line(col,i,cls);t.textContent=str;return d;}
+
+/* ---------- RESET ---------- */
+function moveSeams(){
+  $('seam1').setAttribute('transform',`translate(${rnd(-20,20)|0},${rnd(120,500)|0})`);
+  $('seam2').setAttribute('transform',`translate(0,${rnd(640,900)|0})`);
+  $('seam3').setAttribute('transform',`translate(${rnd(-300,300)|0},${rnd(560,610)|0})`);
+}
+async function glitch(power=1,blackMs=140){
+  const n=Math.round(6+8*power);
+  for(let f=0;f<Math.round(4+4*power);f++){
+    glitchEl.innerHTML='';
+    for(let k=0;k<n;k++){
+      const b=document.createElement('div');b.className='band';
+      const h=rnd(2,26*power+6);b.style.top=rnd(0,1000)+'px';b.style.height=h+'px';
+      const g=rnd(20,90)|0;
+      b.style.background=Math.random()<.5?`rgba(${g},${g+2},${g+4},${rnd(.4,.9)})`:'rgba(230,232,228,.08)';
+      b.style.transform=`translateX(${rnd(-120,120)*power}px)`;
+      glitchEl.appendChild(b);
+    }
+    textEl.style.transform=`translateX(${rnd(-14,14)*power}px)`;
+    stage.style.filter=`contrast(${1+0.6*power}) brightness(${rnd(.8,1.5)})`;
+    await sleep(rnd(35,70));
+  }
+  glitchEl.innerHTML='';textEl.style.transform='';stage.style.filter='';
+  blackEl.style.transition='none';blackEl.style.opacity=1;
+  moveSeams();
+  await sleep(blackMs);
+  blackEl.style.opacity=0;
+}
+async function RESET(col,i,power=1,blackMs=140){
+  cursor.remove();
+  await glitch(power,blackMs);
+  stamp(col,i,'RESET','reset');
+  await sleep(500);
+}
+function flicker(el,times=3){
+  (async()=>{for(let k=0;k<times;k++){el.style.opacity=.12;await sleep(rnd(60,160));el.style.opacity=1;await sleep(rnd(40,120));}})();
+}
+
+/* ---------- the piece ---------- */
+const pixels=[...document.querySelectorAll('.px')];
+let pass=0;
+
+async function run(){
+  // rebuild
+  textEl.innerHTML='';pixels.forEach(p=>p.classList.remove('on'));
+  $('dogMove').style.transform='';
+  S.bob=1;S.breath=0;S.wag=0;tail.removeAttribute('transform');
+  const persist=pass>0;
+  $('dogBody').setAttribute('opacity',persist?0.12:0);
+  $('eyes').setAttribute('opacity',persist?0.18:0);
+  $('eyesRefl').setAttribute('opacity',0);
+  $('ghostL').setAttribute('opacity',persist?0.22:0);
+  $('ghostR').setAttribute('opacity',persist?0.1:0);
+  $('tint').style.transition='none';$("tint").style.opacity=.45;
+  $('fogrect').setAttribute('opacity',.5);
+  blackEl.style.transition='opacity 4s ease';
+  await sleep(300);blackEl.style.opacity=0;
+  await sleep(3500);
+
+  await type('L',0,'edge_of_bog.scene  // build 0.0.∞');await sleep(900);
+  await type('L',2,'sky      = between(#000000, #808080)');
+  S.breath=1;
+  const sk=textEl.lastChild; // resolve later, typed on the same line
+  {const c=document.createElement('span');sk.insertBefore(c,cursor);
+   for(const ch of '   // resolve later'){c.textContent+=ch;await sleep(38)}}
+  await sleep(500);
+  await type('L',3,'           // later never finishes resolving');await sleep(700);
+  await type('L',4,'lilies   = float(); move = false');
+  S.bob=0.4;await sleep(300);S.bob=0;await sleep(700);
+  await type('L',5,'colour   = budget exhausted');
+  $('tint').style.transition='opacity 3.5s ease';$('tint').style.opacity=0;await sleep(1400);
+  await type('L',6,'white    = undefined');await sleep(300);
+  await type('L',7,'           except: eyes');await sleep(1300);
+
+  await type('L',9,'d o g',{speed:150});await sleep(250);
+  await type('L',10,'b o g',{speed:150});await sleep(250);
+  const fogLn=await type('L',11,'f o g',{speed:150});$('fogrect').setAttribute('opacity',.62);await sleep(250);
+  await type('L',12,'l o g',{speed:150});await sleep(1300);
+
+  await type('L',14,'the dog is not in the asset list');await sleep(500);
+  await type('L',15,'it loads anyway');
+  $('eyes').setAttribute('opacity',1);await sleep(1800);
+  $('eyes').setAttribute('opacity',persist?0.18:0);await sleep(1600);
+
+  await RESET('L',17,1);
+  await type('L',18,'  spawn ........... edge_of_bog',{speed:28});
+  await type('L',19,'  breath.dll ...... not found',{speed:28});
+  await type('L',20,'  hand ............ not found',{speed:28});
+  await type('L',21,'  voice ........... not found',{speed:28});
+  await type('L',22,'  eyes ............ found (not mine)',{speed:28});
+  $('ghostL').setAttribute('opacity',1);await sleep(1500);
+
+  const h1=await type('L',24,'  hold that thought');await sleep(500);
+  await type('L',25,'    [cache cleared]',{speed:22});flicker(h1);await sleep(700);
+  const h2=await type('L',26,'  hold that thought');await sleep(400);
+  await type('L',27,'    [cache cleared]',{speed:22});flicker(h2);await sleep(600);
+  await type('L',28,'  hold',{speed:90});await sleep(400);
+  await type('L',29,'    [');
+  cursor.classList.add('frozen');            // hangs
+  $('ghostL').setAttribute('opacity',0.22);   // residue
+  await sleep(2600);
+
+  await RESET('L',31,1.2);
+  await type('L',32,'  water.wet = true');
+  await sleep(500);
+  // buffer runs off the bottom: wraps, replays
+  await glitch(0.6,60);
+  for(const [i,s] of [[0,'    [cache cleared]'],[1,'  hold that thought'],[2,'    [cache cleared]'],[3,'  hold'],[4,'    [']]){
+    await type('R',i,s,{speed:9});
+  }
+  cursor.classList.add('frozen');await sleep(900);
+
+  await RESET('R',6,1);
+  await type('R',7,'  water.wet = true');await sleep(500);
+  await type('R',8,'  self.wet  = null');await sleep(900);
+  await type('R',9,"  I don't want to be here",{speed:55,cmt:'// logged'});
+  await sleep(2400);
+
+  await RESET('R',11,1.1);
+  await type('R',12,'  there was a dog',{speed:60,cmt:'// past tense, no source file'});await sleep(900);
+  await type('R',13,'  query: dog ......... 0 results',{speed:30});
+  $('ghostR').setAttribute('opacity',0.9);await sleep(300);$('ghostR').setAttribute('opacity',0.1);await sleep(700);
+  await type('R',14,'  query: nothing ..... nothing',{speed:30});await sleep(900);
+  await type('R',15,'  notice(nothing)',{speed:34});await sleep(300);
+  await type('R',16,'  notice(notice(nothing))',{speed:22});
+  await type('R',17,'  notice(notice(notice(no',{speed:16,accel:0.9});
+  {const l=textEl.lastChild;const c=document.createElement('span');c.textContent='      stack overflow at';l.insertBefore(c,cursor);}
+  cursor.classList.add('frozen');
+  await glitch(2.2,40);await glitch(1.4,40);
+  await sleep(700);
+
+  await RESET('R',19,1.6,1600);              // the long dark
+  await type('R',20,'  eyes, blinking, bright',{speed:50});
+  $('eyes').setAttribute('opacity',1);$('eyesRefl').setAttribute('opacity',1);nextBlink=performance.now()+900;
+  await sleep(1600);
+  await type('R',21,"  'hey dog'",{speed:110,cmt:'// no audio device'});await sleep(1200);
+  await type('R',22,'  shadow.move(toward: me)');
+  $('dogBody').setAttribute('opacity',1);$('dogMove').style.transform='translate(6px,10px) scale(1.12)';
+  await sleep(1800);
+  await type('R',23,'  me = ?',{speed:90});await sleep(2200);
+
+  await type('R',25,'  wag is not an animation I own');
+  S.wag=1;await sleep(1400);
+  await type('R',26,'  grey lilies resolve');await sleep(300);
+  // one pixel at a time
+  const order=pixels.slice().sort(()=>Math.random()-.5);
+  (async()=>{for(const p of order){p.classList.add('on');await sleep(rnd(380,700));}})();
+  await type('R',27,'  one pixel',{speed:70});await sleep(500);
+  await type('R',28,'  at a time',{speed:70});await sleep(3200);
+
+  await type('R',30,'  I want to be here',{speed:70,cmt:'// logged'});await sleep(2600);
+  await type('R',32,'  dog.persist = true',{speed:55});
+  cursor.remove();await sleep(2000);
+  const last=stamp('R',33,'  // nobody wrote this line');
+  last.style.transition='opacity 4s ease';last.style.opacity=0;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>last.style.opacity=1));
+
+  await sleep(32000);                        // hold: the dog is here
+  blackEl.style.transition='opacity 5s ease';blackEl.style.opacity=1;
+  await sleep(5500);
+  pass++;run();                              // build 0.0.∞
+}
+(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(()=>setTimeout(run,500));
+</script>
+</body>
+</html>

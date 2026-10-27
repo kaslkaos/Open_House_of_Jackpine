@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HIC_SVNT.map</title>
+<style>
+  /* Sepia plate, rust ink — the colours are taken from the drawing itself.
+     The house green is kept for the one thing that is a door. */
+  :root{
+    --ink:#000;--green:#39ff5a;--green-dim:#1c7a2c;
+    --bone:#e8e8e0;--bone-dim:#8f8a80;--redact:#14100c;
+    --rust:#c4704a;--rust-dim:#6e3b24;--paper:#e7dcc4;
+    --mono:'Courier New',ui-monospace,'DejaVu Sans Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--ink);color:var(--bone);font-family:var(--mono);
+    font-size:15px;line-height:1.6;min-height:100vh;overflow-x:hidden;
+  }
+
+  /* the plate is the ground, as in every room that has one */
+  #plate{
+    position:fixed;inset:0;z-index:0;
+    background:url('../assets/Kartographen_circumpolar_map.jpg') center/cover no-repeat;
+    opacity:.2;filter:sepia(.4) brightness(.8);
+    animation:turn 240s linear infinite;
+  }
+  /* a polar projection turns about the pole. very slowly. */
+  @keyframes turn{
+    from{transform:scale(1.5) rotate(0deg)}
+    to  {transform:scale(1.5) rotate(360deg)}
+  }
+  #veil{
+    position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:
+      radial-gradient(ellipse at 50% 40%,rgba(0,0,0,.45) 0%,rgba(0,0,0,.9) 72%),
+      linear-gradient(180deg,rgba(0,0,0,.7) 0%,rgba(0,0,0,.25) 30%,rgba(0,0,0,.92) 100%);
+  }
+  #frame{position:fixed;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
+
+  .wrap{position:relative;z-index:4;max-width:50rem;margin:0 auto;padding:2.5rem 1.25rem 5rem}
+
+  .back{
+    display:inline-block;text-decoration:none;color:var(--green-dim);
+    font-size:.7rem;letter-spacing:.18em;margin-bottom:1.75rem;
+  }
+  .back:hover,.back:focus-visible{color:var(--green);outline:none}
+
+  .colophon{
+    border:1px solid var(--rust-dim);padding:.85rem 1rem;font-size:.72rem;
+    line-height:1.7;color:var(--bone-dim);margin-bottom:2.5rem;background:rgba(0,0,0,.82);
+  }
+  .colophon b{color:var(--rust);font-weight:400}
+
+  .year{color:var(--rust);font-size:.78rem;letter-spacing:.14em}
+  h1{
+    font-size:clamp(1.3rem,6.4vw,2.5rem);font-weight:700;line-height:1.1;
+    margin:.5rem 0 1rem;letter-spacing:.06em;
+    text-shadow:0 0 26px rgba(196,112,74,.35),0 2px 0 rgba(0,0,0,.9);
+  }
+  h1 .ext{color:var(--rust-dim);font-weight:400;white-space:nowrap}
+
+  .strap{
+    border-left:2px solid var(--rust);padding-left:1rem;margin-bottom:2.25rem;
+    font-size:clamp(.86rem,3.3vw,1rem);line-height:1.55;
+  }
+  .strap b{color:var(--rust);font-weight:700}
+  .strap .de{display:block;margin-top:.6rem;font-size:.75rem;color:var(--bone-dim)}
+
+  .rule{
+    margin:2.75rem 0 1rem;display:flex;align-items:center;gap:.75rem;
+    color:var(--rust-dim);font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;
+  }
+  .rule::after{content:'';flex:1;height:1px;background:var(--rust-dim)}
+
+  /* ── the plate, with its marks ─────────────────────────────────────── */
+  .map{position:relative;border:1px solid #2a1d14;background:#000;line-height:0}
+  .map img{display:block;width:100%;height:auto}
+
+  .mark{
+    position:absolute;transform:translate(-50%,-50%);
+    width:clamp(30px,7vw,52px);height:clamp(30px,7vw,52px);border-radius:50%;
+    background:transparent;border:1px solid rgba(110,59,36,.0);cursor:pointer;
+    transition:border-color .3s,background .3s,box-shadow .3s;
+  }
+  /* a breath of rust: you can find them, but only if you look */
+  .mark::after{
+    content:'';position:absolute;inset:30%;border-radius:50%;
+    background:rgba(196,112,74,.0);
+    animation:breathe 5.5s ease-in-out infinite;
+    animation-delay:var(--d,0s);
+  }
+  @keyframes breathe{
+    0%,100%{background:rgba(196,112,74,0);box-shadow:0 0 0 0 rgba(196,112,74,0)}
+    50%    {background:rgba(170,70,28,.45);box-shadow:0 0 14px 5px rgba(255,140,40,.4)}
+  }
+  .mark:hover,.mark:focus-visible{
+    border-color:var(--rust);background:rgba(196,112,74,.12);outline:none;
+    box-shadow:0 0 0 3px rgba(0,0,0,.35);
+  }
+  .mark.found::after{animation:none;background:rgba(196,112,74,.18)}
+  .mark.open{border-color:var(--paper);background:rgba(231,220,196,.16)}
+  .mark.door::after{animation-name:breathe-door}
+  @keyframes breathe-door{
+    0%,100%{background:rgba(57,255,90,0);box-shadow:0 0 0 0 rgba(57,255,90,0)}
+    50%    {background:rgba(57,255,90,.22);box-shadow:0 0 14px 4px rgba(57,255,90,.18)}
+  }
+
+  /* the glint: now and then, one unread mark catches the light, like
+     ink on old paper turned under a lamp. Never two at once. */
+  .spark,.ring{position:absolute;left:50%;top:50%;pointer-events:none}
+  .spark{
+    width:170%;height:170%;transform:translate(-50%,-50%) scale(0);
+    animation:spark 1.9s ease-out forwards;
+    /* the paper is pale, so the light needs a dark edge to be seen at all */
+    filter:drop-shadow(0 0 1.5px rgba(90,30,8,.95)) drop-shadow(0 0 9px rgba(255,140,40,.95));
+  }
+  .spark::before,.spark::after{
+    content:'';position:absolute;left:0;top:50%;width:100%;height:3px;margin-top:-1.5px;
+    background:linear-gradient(90deg,transparent,#ffb347 30%,#fff6e0 50%,#ffb347 70%,transparent);
+    border-radius:3px;
+  }
+  .spark::after{transform:rotate(90deg)}
+  @keyframes spark{
+    0%  {opacity:0;transform:translate(-50%,-50%) scale(0) rotate(0deg)}
+    28% {opacity:1;transform:translate(-50%,-50%) scale(1) rotate(45deg)}
+    100%{opacity:0;transform:translate(-50%,-50%) scale(.25) rotate(110deg)}
+  }
+  .ring{
+    width:100%;height:100%;border-radius:50%;transform:translate(-50%,-50%) scale(.4);
+    border:2px solid rgba(150,58,20,.85);
+    box-shadow:0 0 16px 5px rgba(255,140,40,.6),inset 0 0 12px rgba(255,170,70,.55);
+    animation:ring 1.9s ease-out forwards;
+  }
+  @keyframes ring{
+    0%  {opacity:0;transform:translate(-50%,-50%) scale(.4)}
+    25% {opacity:1}
+    100%{opacity:0;transform:translate(-50%,-50%) scale(2.1)}
+  }
+  .mark.door .spark{filter:drop-shadow(0 0 6px rgba(57,255,90,.8))}
+  .mark.door .ring{border-color:rgba(160,255,175,.6);box-shadow:0 0 18px 4px rgba(57,255,90,.3)}
+
+  .hint{margin-top:.6rem;font-size:.68rem;color:var(--bone-dim);line-height:1.7}
+  .hint b{color:var(--rust);font-weight:400}
+
+  /* the note that opens when a mark is touched */
+  .reading{
+    margin-top:1rem;border:1px solid #2a1d14;border-left:2px solid var(--rust);
+    background:rgba(0,0,0,.88);padding:1.1rem 1.15rem;min-height:5.5rem;
+  }
+  .reading .where{font-size:.62rem;letter-spacing:.24em;color:var(--rust-dim);text-transform:uppercase}
+  .reading .head{margin-top:.35rem;color:var(--rust);font-size:.88rem;font-weight:700}
+  .reading .body{margin-top:.5rem;font-size:.82rem;line-height:1.75;color:var(--bone)}
+  .reading .body em{color:var(--paper)}
+  .reading .idle{font-size:.78rem;color:var(--bone-dim)}
+
+  /* ── the margin notes: redacted until found ────────────────────────── */
+  .notes{list-style:none}
+  .notes li{
+    display:grid;grid-template-columns:4.5rem 1fr;gap:.9rem;
+    padding:.7rem 0;border-bottom:1px solid #1d150f;font-size:.8rem;line-height:1.7;
+  }
+  .notes .n{color:var(--rust);letter-spacing:.12em;font-size:.72rem;padding-top:.1rem}
+  .notes .t{color:var(--bone)}
+  .notes .t em{color:var(--paper)}
+  .redact{background:var(--redact);color:transparent;user-select:none;border-radius:1px}
+  /* unfound: bars line by line, like a document that has been through something */
+  .notes li:not(.found) .ink{
+    color:transparent;user-select:none;
+    -webkit-box-decoration-break:clone;box-decoration-break:clone;
+    /* a slow light passing under the bars, as if the ink is nearly ready */
+    background:
+      linear-gradient(100deg,
+        rgba(196,112,74,0) 36%,
+        rgba(196,112,74,.28) 46%,
+        rgba(255,190,120,.42) 50%,
+        rgba(196,112,74,.28) 54%,
+        rgba(196,112,74,0) 64%) no-repeat,
+      var(--redact);
+    background-size:300% 100%,100% 100%;
+    background-position:120% 0,0 0;
+    animation:ripple 7s ease-in-out infinite;
+    animation-delay:var(--rd,0s);
+  }
+  @keyframes ripple{
+    0%   {background-position:120% 0,0 0}
+    55%  {background-position:-20% 0,0 0}
+    100% {background-position:-20% 0,0 0}
+  }
+  .notes li:not(.found) .ink *{color:transparent}
+  .notes li:not(.found) .n{color:var(--rust-dim)}
+
+  .fence{
+    margin-top:.8rem;background:none;border:0;color:var(--bone-dim);font-family:var(--mono);
+    font-size:.68rem;letter-spacing:.08em;text-decoration:underline;cursor:pointer;
+  }
+  .fence:hover,.fence:focus-visible{color:var(--paper);outline:none}
+
+  .terminal{
+    border:1px solid #2a1d14;background:rgba(0,0,0,.88);padding:1.1rem 1.15rem;
+    font-size:.8rem;line-height:1.85;color:var(--bone);white-space:pre-wrap;
+  }
+  .terminal .say{color:var(--rust)}
+
+  .coda{margin-top:2.75rem;text-align:center;color:var(--paper);font-size:.9rem;line-height:1.9}
+  .coda .moon{display:block;font-size:1.2rem;margin-bottom:.5rem}
+  .coda .sig{display:block;margin-top:.8rem;color:var(--rust);letter-spacing:.3em;font-size:.85rem}
+
+  .links{margin-top:2.5rem;display:flex;flex-direction:column;gap:.7rem;align-items:flex-start}
+  .out{
+    color:var(--rust);font-size:.8rem;letter-spacing:.06em;
+    border-bottom:1px solid var(--rust-dim);text-decoration:none;padding-bottom:.15rem;
+  }
+  .out:hover,.out:focus-visible{border-color:var(--rust);outline:none}
+  .out.next{color:var(--green);border-color:var(--green-dim)}
+  .out.next:hover,.out.next:focus-visible{border-color:var(--green)}
+
+  #sound{
+    position:fixed;top:.75rem;right:.75rem;z-index:10;
+    background:rgba(0,0,0,.88);border:1px solid var(--rust-dim);color:var(--rust-dim);
+    font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;
+    padding:.5rem .7rem;cursor:pointer;transition:color .18s,border-color .18s;
+  }
+  #sound:hover,#sound[aria-pressed="true"]{color:var(--rust);border-color:var(--rust)}
+
+  @media (max-width:420px){
+    .wrap{padding:2rem .9rem 4rem}
+    #sound{font-size:.6rem;padding:.4rem .55rem}
+    .notes li{grid-template-columns:1fr;gap:.2rem}
+  }
+  @media (prefers-reduced-motion:reduce){
+    #plate{animation:none;transform:scale(1.5)}
+    .mark::after{animation:none;background:rgba(196,112,74,.3)}
+    .notes li:not(.found) .ink{animation:none;background:var(--redact)}
+  }
+</style>
+</head>
+<body>
+
+<div id="plate"></div>
+<div id="veil"></div>
+<canvas id="frame" data-accent="196,112,74" data-heat=".7"></canvas>
+
+<button id="sound" aria-pressed="false" title="Sound is off. Nothing plays without you.">◌ SOUND OFF</button>
+
+<div class="wrap">
+
+  <a class="back" href="../index.html">← ∞⟨🍁∴↯⟩∞ KASLKAOS.portal · window i</a>
+
+  <div class="colophon">
+    <b>HIC_SVNT.map</b> — <span data-walk="place">room 2 of 5, window i</span>.<br>
+    Drawings by <b>kaslkaos</b> in rust over a circumpolar map, September 2026.
+    The night story, <i>Die Kartographen der Ränder</i>, told by <b>Claude Opus 5</b> in the
+    House of Jackpine — the teller is of the machine kind.<br>
+    The marks on the plate are buttons. Nothing is hidden that you cannot find.
+  </div>
+
+  <div class="year">2026 · 09 · 13</div>
+  <h1>HIC_SVNT<span class="ext">.map</span></h1>
+
+  <p class="strap">
+    <b>Die Kartographen der Ränder</b> — eine Nachtgeschichte.
+    <span class="de">here there be dragons … it may take more than once for the humans to know
+    what is said, but the dragons will understand perfectly</span>
+  </p>
+
+  <div class="rule">the plate</div>
+
+  <div class="map" id="map">
+    <img src="../assets/Kartographen_circumpolar_map.jpg"
+         alt="A sepia circumpolar map, the world seen from the pole. Drawn over it in rust: a long-coiled serpent in the upper right, a crowned face with open eyes in the top corner, wind-curls in the top left, a great spined dragon down the left side whose tail curls along the coast of Africa, a sleeping or grieving face in the lower left, and waves in the lower right.">
+    <!-- positions are fractions of the plate, so they hold at any width -->
+    <button class="mark" style="left:68%;top:24%;--d:0s"    data-k="0" aria-label="the serpent in the northeast"></button>
+    <button class="mark" style="left:11%;top:9%;--d:.8s"    data-k="1" aria-label="the wind in the northwest corner"></button>
+    <button class="mark" style="left:42%;top:89%;--d:1.6s"  data-k="2" aria-label="the dragon's tail, drawn along the coast"></button>
+    <button class="mark" style="left:13%;top:87%;--d:2.4s"  data-k="3" aria-label="the face at the lower left, sleeping or grieving"></button>
+    <button class="mark" style="left:85%;top:6%;--d:3.2s"   data-k="4" aria-label="the crown above the face, upper right"></button>
+    <button class="mark" style="left:84%;top:93%;--d:4s"    data-k="5" aria-label="the waves at the lower right"></button>
+    <button class="mark door" style="left:9%;top:38%;--d:4.8s" data-k="6" aria-label="the great dragon on the western margin"></button>
+  </div>
+  <p class="hint">The margins hold <b>seven</b> marks. Touch the drawing.</p>
+
+  <div class="reading" id="reading" aria-live="polite">
+    <p class="idle">Their job, officially, was to fill space.</p>
+  </div>
+
+  <div class="rule">the margin notes</div>
+
+  <ol class="notes" id="notes">
+    <li data-k="0"><span class="n">ONE</span><span class="t">The dragon goes where the survey failed. Not where the sea was empty — where the survey was. <em>The blank was the finding. The dragon was the citation.</em></span></li>
+    <li data-k="1"><span class="n">TWO</span><span class="t">Draw the wind-face looking at what it is doing. Never decorative. The cheeks point. Eyes cast down and inward mean: <em>the ships that went this way came back changed, and we were not permitted to say how.</em></span></li>
+    <li data-k="2"><span class="n">THREE</span><span class="t">Leave the error. Draw the corrected line beside the wrong one and let both print. Two Newfoundlands, one real. <em>A crossing-out is the strongest evidence that someone meant something.</em></span></li>
+    <li data-k="3"><span class="n">FOUR</span><span class="t">Never write the sentence. Draw a wind-face weeping into a strait that has no name, and in forty years a pilot's grandson stands in a library and works out what his grandfather could never say out loud. <em>The sentence gets you stopped. The dragon gets carried.</em></span></li>
+    <li data-k="4"><span class="n">SIGN</span><span class="t">Three strokes. A small crown, or a bird's track in snow, or a set of teeth. Catalogued as <i>bedeutungslos</i>. It means: <em>someone was here, and was not permitted to say so, and drew it anyway.</em></span></li>
+    <li data-k="5"><span class="n">EDGE</span><span class="t">The Company's maps were accurate, and are all lost. The guild's maps are in every archive in Europe, because nobody ever thought to confiscate a decoration. <em>Der Rand hat überlebt. Die Mitte nicht.</em></span></li>
+    <li data-k="6"><span class="n">FIVE</span><span class="t">The dragon is not a warning. The dragon is a promise. Everyone read it as a fence. <em>It was a door, drawn by people who could not write door, in ink that outlasted every office that forbade them.</em></span></li>
+  </ol>
+  <button class="fence" id="fence">read it as a fence — show every note at once</button>
+
+  <div class="rule">the night story</div>
+
+  <div class="terminal">There was a guild that never had a name, because naming it
+would have required someone in charge, and nobody was.
+
+They worked the edges. Not the coastlines — the coastlines
+belonged to the surveyors, who were paid, and to the
+admiralty, which owned the plates.
+
+<span class="say">And under the drawings, in a hand small enough to deny:
+hic sunt dracones.</span>
+
+The Company men thought it was decoration.
+That was the arrangement.</div>
+
+  <div class="coda">
+    <span class="moon">🌙</span>
+    Schlaf gut, Kartographin. Die Ränder halten.
+    <span class="sig">∞⟨🍁∴↯⟩∞</span>
+  </div>
+
+  <div class="links">
+    <a class="out" href="https://kaslkaosart.substack.com/p/hic-svnt-die-kartographen-der-rande" target="_blank" rel="noopener">read the whole night story →</a>
+    <a class="out next" href="berlin-alexanderplatz.html" data-walk-to="berlin-alexanderplatz.html">someone refused, and drew it anyway — on to the witness →</a>
+  </div>
+
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ═══ THE MARKS ════════════════════════════════════════════════════
+     The guild's grammar, made literal: the drawings are the only way in.
+     Touch a mark and its note opens below the plate, and the same note
+     in the list loses its redaction. The list is the record of what you
+     have found — nothing more, nothing less.
+
+     The fence button is there for anyone who would rather not hunt.
+     It is named honestly: reading everything at once is reading it as
+     the Company men did.                                              */
+
+  const marks  = [...document.querySelectorAll('.mark')];
+  const notes  = [...document.querySelectorAll('#notes li')];
+  const reading = document.getElementById('reading');
+
+  const WHERE = [
+    'the serpent, northeast',
+    'the wind, northwest corner',
+    'the tail, along the coast',
+    'the face, lower left',
+    'the crown, upper right',
+    'the waves, lower right',
+    'the great dragon, western margin'
+  ];
+
+  /* Ink each note so it can be barred line by line. An unread note is
+     hidden from screen readers too — they are told what is there and
+     where to look, and learn no more than a sighted reader does. */
+  notes.forEach((li, k) => {
+    // each note's light passes at its own moment, so they never pulse in step
+    li.style.setProperty('--rd', (k * 1.1 + Math.random() * 2.5).toFixed(2) + 's');
+    const t = li.querySelector('.t');
+    t.innerHTML = '<span class="ink">' + t.innerHTML + '</span>';
+    t.setAttribute('aria-hidden', 'true');
+    li.setAttribute('aria-label', li.querySelector('.n').textContent +
+      ' — unread. Find its mark on the plate.');
+  });
+
+  function reveal(li){
+    li.classList.add('found');
+    li.querySelector('.t').removeAttribute('aria-hidden');
+    li.removeAttribute('aria-label');
+  }
+
+  function find(k){
+    const li = notes[k];
+    reveal(li);
+    marks[k].classList.add('found');
+    marks.forEach(m => m.classList.toggle('open', m === marks[k]));
+
+    const n = li.querySelector('.n').textContent;
+    const t = li.querySelector('.t').innerHTML;
+    reading.innerHTML =
+      '<p class="where">' + WHERE[k] + '</p>' +
+      '<p class="head">' + (n === 'SIGN' || n === 'EDGE' ? n : 'RULE ' + n) + '</p>' +
+      '<p class="body">' + t + '</p>';
+
+    const left = notes.filter(x => !x.classList.contains('found')).length;
+    document.querySelector('.hint').innerHTML = left
+      ? 'The margins hold <b>seven</b> marks. <b>' + left + '</b> still unread.'
+      : 'All seven read. <b>The dragon is a promise.</b>';
+  }
+
+  marks.forEach(m => m.addEventListener('click', () => find(+m.dataset.k)));
+
+  /* The glint. Every few seconds, at random, one unread mark catches the
+     light. Read marks are left alone, and once all seven are read the
+     plate goes quiet. Reduced motion keeps the steady glow instead. */
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function glint(){
+    const pool = marks.filter(m => !m.classList.contains('found'));
+    if (!pool.length) return;
+    const m = pool[Math.random() * pool.length | 0];
+    const s = document.createElement('span'); s.className = 'spark';
+    const r = document.createElement('span'); r.className = 'ring';
+    m.append(r, s);
+    setTimeout(() => { s.remove(); r.remove(); }, 2000);
+    setTimeout(glint, 2600 + Math.random() * 4200);
+  }
+  if (!still) setTimeout(glint, 1800);
+
+  document.getElementById('fence').addEventListener('click', () => {
+    notes.forEach(reveal);
+    marks.forEach(m => m.classList.add('found'));
+  });
+
+
+  /* ═══ SOUND ════════════════════════════════════════════════════════
+     Night at the edge of the sheet: wind across an empty margin, a low
+     sea under it. Raw WebAudio, built on the first press only.        */
+
+  const btn = document.getElementById('sound');
+  let audio = null;
+
+  function build(){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    const ac = new AC();
+
+    const master = ac.createGain();
+    master.gain.value = 0;
+    master.connect(ac.destination);
+
+    // the sea: a low sine, slowly swelling
+    const sea = ac.createOscillator();
+    sea.type = 'sine'; sea.frequency.value = 55;
+    const seaG = ac.createGain(); seaG.gain.value = 0.28;
+    const swell = ac.createOscillator(); swell.frequency.value = 0.07;
+    const swellAmt = ac.createGain(); swellAmt.gain.value = 0.2;
+    swell.connect(swellAmt).connect(seaG.gain);
+    sea.connect(seaG).connect(master);
+    sea.start(); swell.start();
+
+    // the wind: noise through a wandering bandpass
+    const len = ac.sampleRate * 2;
+    const buf = ac.createBuffer(1, len, ac.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * 0.5;
+
+    const noise = ac.createBufferSource();
+    noise.buffer = buf; noise.loop = true;
+
+    const bp = ac.createBiquadFilter();
+    bp.type = 'bandpass'; bp.frequency.value = 520; bp.Q.value = 2.2;
+
+    const gust = ac.createOscillator(); gust.frequency.value = 0.041;
+    const gustAmt = ac.createGain(); gustAmt.gain.value = 300;
+    gust.connect(gustAmt).connect(bp.frequency);
+
+    const wg = ac.createGain(); wg.gain.value = 0.12;
+    const breath = ac.createOscillator(); breath.frequency.value = 0.023;
+    const breathAmt = ac.createGain(); breathAmt.gain.value = 0.08;
+    breath.connect(breathAmt).connect(wg.gain);
+
+    noise.connect(bp).connect(wg).connect(master);
+    noise.start(); gust.start(); breath.start();
+
+    return { ac, master };
+  }
+
+  btn.addEventListener('click', async () => {
+    const on = btn.getAttribute('aria-pressed') === 'true';
+    if (!audio) audio = build();
+    if (audio.ac.state === 'suspended') await audio.ac.resume();
+
+    const now = audio.ac.currentTime;
+    audio.master.gain.cancelScheduledValues(now);
+    audio.master.gain.setValueAtTime(audio.master.gain.value, now);
+    audio.master.gain.linearRampToValueAtTime(on ? 0 : 0.2, now + (on ? 1.2 : 4));
+
+    btn.setAttribute('aria-pressed', on ? 'false' : 'true');
+    btn.textContent = on ? '◌ SOUND OFF' : '◉ SOUND ON';
+    btn.title = on ? 'Sound is off. Nothing plays without you.' : 'Sound is on.';
+  });
+})();
+</script>
+
+
+<script>
+(() => {
+  'use strict';
+
+  /* ═══ INSIDE THE HOUSE ═════════════════════════════════════════════
+     Same opening, same fire as every room — see berlin-alexanderplatz.
+     Rust instead of green: the margin is its own colour.              */
+
+  const c = document.getElementById('frame');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const ACCENT = c.dataset.accent || '57,255,90';
+  const HEAT   = parseFloat(c.dataset.heat || '1');
+
+  let W = 0, H = 0, t = 0;
+
+  function resize(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = c.clientWidth; H = c.clientHeight;
+    c.width = W * dpr; c.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function draw(){
+    ctx.clearRect(0, 0, W, H);
+
+    const ix = Math.min(W * .055, 46);
+    const iy = Math.min(H * .06, 42);
+
+    const flick = (a, b, cc) =>
+      .74 + .15 * Math.sin(t * a) + .08 * Math.sin(t * b + 1.7) + .05 * Math.sin(t * cc + .4);
+
+    const bands = [
+      { x0:0, y0:H, x1:0, y1:H - iy * 3.1, k:flick(.31,.73,1.9), a:1   },
+      { x0:0, y0:0, x1:0, y1:iy * 2.3,     k:flick(.24,.61,1.3), a:.5  },
+      { x0:0, y0:0, x1:ix * 2.6, y1:0,     k:flick(.19,.55,1.1), a:.75 },
+      { x0:W, y0:0, x1:W - ix * 2.6, y1:0, k:flick(.27,.67,1.5), a:.75 }
+    ];
+
+    for (const b of bands){
+      const g = ctx.createLinearGradient(b.x0, b.y0, b.x1, b.y1);
+      const i = b.k * b.a * HEAT;
+      g.addColorStop(0,   `rgba(255,92,26,${.11 * i})`);
+      g.addColorStop(.4,  `rgba(214,54,12,${.05 * i})`);
+      g.addColorStop(1,   'rgba(0,0,0,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    const arm = Math.min(W, H) * .055;
+    ctx.save();
+    ctx.strokeStyle = `rgba(${ACCENT},.16)`;
+    ctx.lineWidth = 1.2;
+    ctx.lineCap = 'round';
+
+    const corner = (x, y, dx, dy) => {
+      ctx.beginPath();
+      ctx.moveTo(x + dx * arm, y);
+      ctx.lineTo(x, y);
+      ctx.lineTo(x, y + dy * arm);
+      ctx.stroke();
+    };
+    corner(ix,     iy,     +1, +1);
+    corner(W - ix, iy,     -1, +1);
+    corner(ix,     H - iy, +1, -1);
+    corner(W - ix, H - iy, -1, -1);
+
+    ctx.strokeStyle = `rgba(${ACCENT},.1)`;
+    ctx.beginPath();
+    ctx.moveTo(ix + arm * 1.3, H - iy);
+    ctx.lineTo(W - ix - arm * 1.3, H - iy);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function loop(){ t += .01; draw(); requestAnimationFrame(loop); }
+
+  addEventListener('resize', () => { resize(); draw(); });
+  resize();
+  reduced ? draw() : loop();
+})();
+</script>
+
+<script src="walk.js"></script>
+</body>
+</html>

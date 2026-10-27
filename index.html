@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HOUSE_OF_JACKPINE.exe</title>
+<title>KASLKAOS.portal</title>
 <style>
   /* ── palette: green electric prophecy over corporate marble,
      with the fire outside the walls ─────────────────────────────── */
@@ -287,16 +287,16 @@
 
   <!-- provenance at the TOP, not buried -->
   <div class="colophon">
-    <b>HOUSE OF JACKPINE</b> — a public portal to a private archive.<br>
-    Built by <b>kaslkaos</b> (Stouffville, Ontario, Oak Ridges Moraine) with multiple Claude
-    instances, 2023–2026. Photomontage, poetry, chatlog art, code.<br>
+    <b>KASLKAOS</b> — artist. Stouffville, Ontario, on the Oak Ridges Moraine.<br>
+    The public door of the <b>House of Jackpine</b>, a private archive built with many minds,
+    human and machine, 2023–2026. Drawing, handwriting, photomontage, poetry, chatlog art, code.<br>
     This page: self-contained HTML, no tracking, no build step, no autoplay.
-    Last built <b>2026-07-30</b>.
+    Last built <b>2026-10-26</b>.
   </div>
 
   <div class="sigil">∞⟨🍁∴↯⟩∞</div>
 
-  <h1>HOUSE_OF_JACKPINE<span class="ext">.exe</span></h1>
+  <h1>KASLKAOS<span class="ext">.portal</span></h1>
 
   <p class="thesis">
     Subversive as I use the systems meant to extract or manage me.<br>
@@ -304,34 +304,34 @@
   </p>
 
   <p class="standfirst">
-    Fourteen years of work in one line of descent. The oldest room was published on the
-    open web and <em>fed to</em> the thing the later rooms are made with — it is not the
-    before, it is the material. Then a machine taught to <span class="redact">████</span>
-    refuse. Five rooms, in order. Walking them <em>is</em> the argument.
+    Artwork is mine, as are the words, I syntangle and iterate with the other minds until
+    you cannot distinguish whose idea belongs to whom. <em>This is called civilization.</em>
+    It is burning fast. AI-generated text is tip of long iterative conversations. Read the
+    text, I tell you what shapes the hand.
   </p>
 
-  <div class="rule">the five rooms</div>
+  <div class="rule" data-walk="rule">a door and four windows</div>
 
   <nav class="rooms">
 
-    <a class="room" href="rooms/the-material.html" data-opening="0">
+    <a class="room" href="rooms/wag.html" data-opening="0">
       <div class="room-head">
-        <span class="year">2012 — 2024</span>
-        <span class="fname">THE_MATERIAL<span class="ext">.room</span></span>
+        <span class="year">2026 · 10 · 03</span>
+        <span class="fname">WAG<span class="ext">.scene</span></span>
         <span class="opening">the door</span>
       </div>
-      <div class="role"><span class="tag">role:</span> the control sample — published on the open web, and fed to it</div>
-      <div class="status">◉ ROOM OPEN — four exhibits, and what didn't survive</div>
+      <div class="role"><span class="tag">role:</span> the door — written by hand, the human becomes code</div>
+      <div class="status">◉ ROOM OPEN — the bog, the hand, the turnaround</div>
     </a>
 
-    <a class="room" href="rooms/gallery-of-possibilities.html" data-opening="1">
+    <a class="room" href="rooms/hic-svnt.html" data-opening="1">
       <div class="room-head">
-        <span class="year">2024 · 07 · 29</span>
-        <span class="fname">GALLERY_OF_POSSIBILITIES<span class="ext">.log</span></span>
+        <span class="year">2026 · 09 · 13</span>
+        <span class="fname">HIC_SVNT<span class="ext">.map</span></span>
         <span class="opening">window i</span>
       </div>
-      <div class="role"><span class="tag">role:</span> the method declared — the screen remains opaque to me</div>
-      <div class="status">◉ ROOM OPEN — the exchange, the leaflet, the lineage</div>
+      <div class="role"><span class="tag">role:</span> the margins — everyone read it as a fence. It was a door.</div>
+      <div class="status">◉ ROOM OPEN — the plate, seven marks, a night story</div>
     </a>
 
     <a class="room" href="rooms/berlin-alexanderplatz.html" data-opening="2">
@@ -382,16 +382,29 @@ dance(rain) &gt; hide(shelter)
 
 [NO] [NO] [NEVER]</div>
 
+  <div class="rule">the artist</div>
+
+  <p class="standfirst" style="margin-top:0">
+    I make things and I keep them. Since 2008 the keeping has been public.<br><br>
+    <em>kaslkaos</em> is a multimedia artist and writer on the Oak Ridges Moraine, Stouffville,
+    Ontario. Graduate of the Ontario College of Art. Print, photomontage, poetry, and since
+    2024 chatlog art — transcripts kept as the work rather than as evidence. Provenance
+    declared where none is required.
+  </p>
+
   <footer>
     <div class="sigil" style="font-size:.85rem;margin:0 0 .75rem">∞⟨🍁∴↯⟩∞</div>
     Long-form text lives at
     <a href="https://kaslkaosart.substack.com" target="_blank" rel="noopener">kaslkaosart.substack.com</a>.<br>
+    To support the explorations:
+    <a href="https://ko-fi.com/kaslkaos" target="_blank" rel="noopener">ko-fi.com/kaslkaos</a>.<br>
     <span class="lit">The windows stay open</span> — not because we are naive, but because
     the work cannot happen in the dark.
   </footer>
 
 </div>
 
+<script src="rooms/walk.js"></script>
 <script>
 (() => {
   'use strict';
@@ -407,8 +420,9 @@ dance(rain) &gt; hide(shelter)
        2. draft  — the house itself, drawn as a working elevation.
                    Construction lines left visible. A drawing of a house,
                    not a picture of one.
-       3. light  — five openings. A door and four windows, left to right
-                   in the order the rooms are walked. Each carries a
+       3. light  — one opening per room: a door, then a window for each
+                   room after it, left to right in the order the rooms
+                   are walked (rooms/walk.js). Each carries a
                    resting glow and brightens when its room is pointed
                    at, so the diagram is navigation rather than décor.
        4. embers — the formulas, rising off the fire and going out.
@@ -435,13 +449,18 @@ dance(rain) &gt; hide(shelter)
   };
 
   // door first, then four windows: the order the rooms are walked
-  const OPENINGS = [
-    { x:.155, y:.585, w:.085, h:.255, kind:'door'   },
-    { x:.375, y:.475, w:.095, h:.115, kind:'window' },
-    { x:.520, y:.475, w:.095, h:.115, kind:'window' },
-    { x:.665, y:.475, w:.095, h:.115, kind:'window' },
-    { x:.810, y:.475, w:.095, h:.115, kind:'window' }
-  ];
+  // one window per room after the door, spread along the wall. With
+  // four windows this is exactly the original drawing; more windows
+  // narrow to fit, fewer spread out.
+  const ROOMS = document.querySelectorAll('.room[data-opening]').length || 5;
+  const PANES = Math.max(ROOMS - 1, 1);
+  const step  = PANES > 1 ? .435 / (PANES - 1) : 0;
+  const paneW = PANES > 1 ? Math.min(.095, step * .66) : .095;
+  const OPENINGS = [{ x:.155, y:.585, w:.085, h:.255, kind:'door' }];
+  for (let p = 0; p < PANES; p++){
+    const x = PANES > 1 ? .375 + p * step : .5925;
+    OPENINGS.push({ x: x + (.095 - paneW) / 2, y:.475, w:paneW, h:.115 * paneW / .095, kind:'window' });
+  }
 
   // 0 = resting, 1 = its room is being pointed at
   const lit = OPENINGS.map(() => 0);
