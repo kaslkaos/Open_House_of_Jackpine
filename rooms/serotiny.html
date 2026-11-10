@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SERØTINY.burn</title>
+<!--
+  ∞⟨🍁∴↯⟩∞  SERØTINY.burn — the hidden room.
+
+  Reached only by holding the sealed cone in the stand at the foot of the
+  portal. No card, no window, no neighbours (it is a game in the register).
+
+  A forest-fire cellular automaton, after the Drossel–Schwabl model, with
+  one serotiny twist: a burnt tree becomes an open cone ⦿ for a few ticks,
+  and ground beside it regrows 25 times faster. The fire plants the next stand.
+
+  Made with kaslkaos in the Claude app on a tablet (Claude Opus 5.5,
+  November 2026), moved onto the room shell in Claude Code.
+
+  ?ambient after the address hides the controls and the words, leaving the
+  field, the sound and the way back: for leaving it running.
+
+  Tuning knobs, at the top of the script: TICK, FADE, MATURE, SEED_BOOST.
+  Volume ceilings are in audioTick().
+-->
+<link rel="stylesheet" href="shell.css">
+<style>
+  /* the room's light: amber over a burnt night, the greens of the stand */
+  :root{
+    --ink:#0a0b0a;
+    --accent:#e8a64e;
+    --accent-dim:#6b3a1c;
+    --bone:#d9cfbd;
+    --bone-dim:#8a7a62;
+    --green:#39ff5a;
+    --green-dim:#1c7a2c;
+  }
+  .strap{border-left-color:var(--green-dim)}
+  .strap b{color:var(--green);font-weight:400}
+
+  .field{border:1px solid #1f2a1f;background:rgba(0,0,0,.6);padding:12px}
+  #cv{width:100%;display:block;cursor:crosshair;touch-action:none}
+  .st{font-size:.72rem;color:var(--bone-dim);margin:.6rem 0 0;display:flex;
+      justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+  .st #msg{color:var(--accent)}
+
+  .controls{margin-top:1rem}
+  .row{display:flex;align-items:center;gap:.75rem;margin:.7rem 0 0;flex-wrap:wrap}
+  .row label{font-size:.72rem;color:var(--green-dim);min-width:6rem;letter-spacing:.12em}
+  .row output{font-size:.72rem;color:var(--bone-dim);min-width:1.5rem}
+  input[type=range]{flex:1;accent-color:#c98a3c;min-width:8rem}
+  button.b{background:none;border:1px solid var(--green-dim);color:var(--green-dim);
+    font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;padding:.45rem .8rem;cursor:pointer;
+    transition:color .2s,border-color .2s}
+  button.b:hover,button.b:focus-visible{border-color:var(--accent);color:var(--accent);outline:none}
+  .row .amb{margin-left:auto;font-size:.72rem;color:var(--bone-dim);text-decoration:none}
+  .row .amb:hover{color:var(--accent)}
+
+  p.body{font-size:.82rem;color:var(--bone);margin:0 0 .75rem;line-height:1.7}
+  p.body .k{color:var(--accent)}
+
+  /* ambient: just the field, the sound, and the way back */
+  .ambient :is(.colophon,.year,.strap,.controls,.about,.st,.rule){display:none}
+  .ambient h1{margin-bottom:1.5rem}
+</style>
+</head>
+<body>
+
+<canvas id="frame" data-accent="232,166,78" data-heat="1"></canvas>
+
+<!-- FIXED TOP 1 — the status line is the sound button -->
+<button id="sound" aria-pressed="false" title="Sound is off. Nothing plays without you.">◌ SOUND OFF</button>
+
+<div class="wrap">
+
+  <a class="back" href="../index.html">← ∞⟨🍁∴↯⟩∞ KASLKAOS.portal · the hidden room</a>
+
+  <div class="colophon">
+    <b>SERØTINY.burn</b> — <span data-walk="place">the hidden room</span>, House of Jackpine.<br>
+    Built by <b>kaslkaos</b> with <b>Claude Opus 5.5</b>, 2026.
+    Made and played on a tablet; every sound is synthesized live, nothing is recorded.
+  </div>
+
+  <div class="year" data-walk="date">2026 · 11 · 08</div>
+  <h1>SERØTINY<span class="ext">.burn</span></h1>
+  <p class="strap"><b>Jack pine, the seed that answers fire.</b></p>
+
+  <!-- ═══ THE FREE MIDDLE ═══════════════════════════════════════════ -->
+
+  <div class="rule">the burn</div>
+
+  <div class="field">
+    <canvas id="cv" aria-label="A forest of glyphs. Tap to strike lightning, drag to burn."></canvas>
+    <div class="st"><span id="cnt">∘ 0 · ◎ 0 · ◉ 0 · ⦿ 0</span><span id="msg">The cones wait for fire.</span></div>
+  </div>
+
+  <div class="controls">
+    <div class="row"><label for="gr">growth</label><input type="range" id="gr" min="1" max="30" step="1" value="10"><output id="grv">10</output></div>
+    <div class="row"><label for="li">lightning</label><input type="range" id="li" min="0" max="20" step="1" value="4"><output id="liv">4</output></div>
+    <div class="row">
+      <button class="b" id="rain">rain: off</button>
+      <button class="b" id="pause">pause</button>
+      <button class="b" id="reset">RESET</button>
+      <a class="amb" href="?ambient">ambient →</a>
+    </div>
+  </div>
+
+  <div class="about">
+    <div class="rule">the rules</div>
+    <p class="body">Tap to strike, drag to burn.
+      <span class="k">·</span> empty ground, <span class="k">∘</span> sapling,
+      <span class="k">◎</span> sealed cone, <span class="k">◉</span> burning,
+      <span class="k">⦿</span> open and seeding, <span class="k">∴</span> ash.</p>
+    <p class="body">The jack pine keeps its cones sealed until fire opens them. Here, ground
+      beside an open cone regrows twenty-five times faster: the burn plants the next stand.</p>
+  </div>
+
+  <!-- FIXED BOTTOM — no outward links; walk.js adds the way back and the sigil -->
+
+</div>
+
+<script>
+(() => {
+'use strict';
+const TICK = 460, FADE = 900, MATURE = 18, SEED_BOOST = 25;
+
+if (location.search.indexOf('ambient') > -1) document.body.classList.add('ambient');
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const $ = id => document.getElementById(id);
+const cv = $('cv'), cx = cv.getContext('2d');
+const S = 15, R = 22;
+let C, N, g, t, pv, ch;
+let run = !reduced, rain = false, glows = [], cnt = [0,0,0,0,0,0];
+let lastChange = 0;                         // when anything last changed on the field
+const d = Math.min(window.devicePixelRatio || 1, 2);
+
+// 0 empty, 1 sapling, 2 mature, 3 burning, 4 seeding, 5 ash
+const GL = ['·','∘','◎','◉','⦿','∴'];
+const K  = ['#163020','#1c7a2c','#2fcf4d','#e8a64e','#c98a3c','#4a3420'];
+
+function size(){
+  const w = cv.clientWidth;
+  C = Math.max(8, Math.floor(w / S)); N = C * R;
+  cv.width = w * d; cv.height = R * S * d; cv.style.height = R * S + 'px';
+  cx.setTransform(d, 0, 0, d, 0, 0);
+  cx.font = "13px 'Courier New',ui-monospace,Menlo,Consolas,monospace";
+  cx.textAlign = 'center'; cx.textBaseline = 'middle';
+}
+function reset(){
+  size();
+  g = new Uint8Array(N); t = new Uint8Array(N); pv = new Uint8Array(N); ch = new Float64Array(N);
+  for (let i = 0; i < N; i++){ const r = Math.random(); g[i] = r < .5 ? 2 : r < .6 ? 1 : 0; pv[i] = g[i]; }
+  lastChange = performance.now();
+  count();
+}
+function nb(i, s){
+  const x = i % C; let n = 0;
+  if (x > 0 && g[i-1] === s) n++;
+  if (x < C-1 && g[i+1] === s) n++;
+  if (i >= C && g[i-C] === s) n++;
+  if (i < N-C && g[i+C] === s) n++;
+  return n;
+}
+function set(arr, i, s, now){ if (arr[i] !== s){ pv[i] = g[i]; arr[i] = s; ch[i] = now; lastChange = now; } }
+function glow(i){ glows.push({ x: (i % C) * S + S/2, y: ((i / C) | 0) * S + S/2, t: performance.now() }); thunder(); }
+function count(){
+  cnt = [0,0,0,0,0,0];
+  for (let i = 0; i < N; i++) cnt[g[i]]++;
+  $('cnt').textContent = '∘ ' + cnt[1] + ' · ◎ ' + cnt[2] + ' · ◉ ' + cnt[3] + ' · ⦿ ' + cnt[4];
+  $('msg').textContent = cnt[3] > 30 ? 'It is burning fast.'
+                       : cnt[4] > 0  ? 'Jack pine, the seed that answers fire.'
+                       :               'The cones wait for fire.';
+}
+
+function step(){
+  const now = performance.now(), p = +$('gr').value / 4000, sp = rain ? .25 : 1;
+  const n = new Uint8Array(g), nt = new Uint8Array(t);
+  for (let i = 0; i < N; i++){
+    const s = g[i];
+    if (s === 0 || s === 5){
+      if (Math.random() < (nb(i, 4) ? p * SEED_BOOST : p)){ set(n, i, 1, now); nt[i] = 0; }
+      else if (s === 5 && ++nt[i] > 14){ set(n, i, 0, now); nt[i] = 0; }
+    }
+    else if (s === 1){ if (nb(i, 3) && Math.random() < .3 * sp){ set(n, i, 3, now); nt[i] = 0; } else if (++nt[i] > MATURE){ set(n, i, 2, now); nt[i] = 0; } }
+    else if (s === 2){ if (nb(i, 3) && Math.random() < .55 * sp){ set(n, i, 3, now); nt[i] = 0; } }
+    else if (s === 3){ if (++nt[i] > 3){ set(n, i, 4, now); nt[i] = 0; } }
+    else if (s === 4){ if (++nt[i] > 6){ set(n, i, 5, now); nt[i] = 0; } }
+  }
+  g = n; t = nt;
+  if (!rain && Math.random() < +$('li').value / 400){
+    const k = (Math.random() * N) | 0;
+    if (g[k] === 2){ set(g, k, 3, now); t[k] = 0; }
+    glow(k);
+  }
+  count();
+  audioTick();
+}
+
+/* Drawing: only while something is moving. A field at rest (no fire, no
+   lightning, nothing mid-fade) is left as it is, which spares a tablet's
+   battery. */
+function draw(){
+  const now = performance.now();
+  const busy = glows.length || cnt[3] > 0 || now - lastChange < FADE + 60;
+  if (busy){
+    cx.clearRect(0, 0, C * S, R * S);
+    glows = glows.filter(o => {
+      const a = 1 - (now - o.t) / 1400;
+      if (a <= 0) return false;
+      cx.fillStyle = 'rgba(62,193,255,' + (a * .05) + ')';
+      cx.fillRect(0, 0, C * S, R * S);
+      const gr = cx.createRadialGradient(o.x, o.y, 0, o.x, o.y, 110);
+      gr.addColorStop(0, 'rgba(200,230,255,' + (a * .45) + ')');
+      gr.addColorStop(1, 'rgba(200,230,255,0)');
+      cx.fillStyle = gr; cx.fillRect(o.x - 110, o.y - 110, 220, 220);
+      return true;
+    });
+    for (let i = 0; i < N; i++){
+      const x = (i % C) * S + S/2, y = ((i / C) | 0) * S + S/2, s = g[i];
+      const k = Math.min(1, (now - ch[i]) / FADE);
+      if (k < 1){ cx.globalAlpha = 1 - k; cx.fillStyle = K[pv[i]]; cx.fillText(GL[pv[i]], x, y); }
+      cx.globalAlpha = k;
+      cx.fillStyle = s === 3 && Math.sin(now / 180 + i * 1.7) > .4 ? '#f2c27a' : K[s];
+      cx.fillText(GL[s], x, y);
+    }
+    cx.globalAlpha = 1;
+  }
+  requestAnimationFrame(draw);
+}
+
+/* ═══ SOUND — all synthesized from noise, only after the button ═══ */
+let ac, M, wG, wF, fG, rG, wn, br, on = false;
+function buf(brown){
+  const b = ac.createBuffer(1, ac.sampleRate * 3, ac.sampleRate), a = b.getChannelData(0);
+  let l = 0;
+  for (let i = 0; i < a.length; i++){ const w = Math.random() * 2 - 1; if (brown){ l = (l + .02 * w) / 1.02; a[i] = l * 3.5; } else a[i] = w; }
+  return b;
+}
+function loopSrc(b){ const s = ac.createBufferSource(); s.buffer = b; s.loop = true; s.start(); return s; }
+function initAudio(){
+  ac = new (window.AudioContext || window.webkitAudioContext)();
+  M = ac.createGain(); M.gain.value = .9; M.connect(ac.destination);
+  wn = buf(false); br = buf(true);
+  // wind: white noise through a slowly wandering bandpass
+  wF = ac.createBiquadFilter(); wF.type = 'bandpass'; wF.frequency.value = 480; wF.Q.value = .6;
+  wG = ac.createGain(); wG.gain.value = 0; loopSrc(wn).connect(wF); wF.connect(wG); wG.connect(M);
+  const lfo = ac.createOscillator(), lg = ac.createGain();
+  lfo.frequency.value = .06; lg.gain.value = 220; lfo.connect(lg); lg.connect(wF.frequency); lfo.start();
+  // fire roar: brown noise, lowpassed
+  const fF = ac.createBiquadFilter(); fF.type = 'lowpass'; fF.frequency.value = 520;
+  fG = ac.createGain(); fG.gain.value = 0; loopSrc(br).connect(fF); fF.connect(fG); fG.connect(M);
+  // rain: a quiet highpassed hiss
+  const rH = ac.createBiquadFilter(); rH.type = 'highpass'; rH.frequency.value = 2800;
+  rG = ac.createGain(); rG.gain.value = 0; loopSrc(wn).connect(rH); rH.connect(rG); rG.connect(M);
+}
+function audioTick(){
+  if (!on) return;
+  const T = ac.currentTime, m = cnt[2] / N, b = cnt[3];
+  wG.gain.setTargetAtTime(Math.min(.28, m * .45) * (.8 + Math.random() * .4), T, 1.2); // wind follows the mature trees
+  fG.gain.setTargetAtTime(Math.min(.5, b / 60), T, .6);                                // the roar follows the burn
+  rG.gain.setTargetAtTime(rain ? .035 : 0, T, 1.5);
+  const c = Math.min(6, Math.round(b * .08 * Math.random()));
+  for (let i = 0; i < c; i++) crackle(T + Math.random() * .4);
+}
+function crackle(at){
+  const s = ac.createBufferSource(); s.buffer = wn;
+  const h = ac.createBiquadFilter(); h.type = 'highpass'; h.frequency.value = 1800 + Math.random() * 2500;
+  const e = ac.createGain();
+  e.gain.setValueAtTime(0, at);
+  e.gain.linearRampToValueAtTime(.05 + Math.random() * .12, at + .003);
+  e.gain.exponentialRampToValueAtTime(.0005, at + .03 + Math.random() * .05);
+  s.connect(h); h.connect(e); e.connect(M); s.start(at, Math.random() * 2, .12);
+}
+function thunder(){
+  if (!on) return;
+  const at = ac.currentTime + .8 + Math.random() * 1.2, s = ac.createBufferSource(); s.buffer = br;
+  const f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 140;
+  const e = ac.createGain();
+  e.gain.setValueAtTime(0, at);
+  e.gain.linearRampToValueAtTime(.35, at + .4);
+  e.gain.exponentialRampToValueAtTime(.001, at + 3.2);
+  s.connect(f); f.connect(e); e.connect(M); s.start(at, Math.random(), 3.4);
+}
+const snd = $('sound');
+snd.addEventListener('click', () => {
+  if (!ac) initAudio();
+  on = !on;
+  if (on){ ac.resume(); snd.textContent = '◉ SOUND ON'; snd.title = 'Sound is on.'; }
+  else   { ac.suspend(); snd.textContent = '◌ SOUND OFF'; snd.title = 'Sound is off. Nothing plays without you.'; }
+  snd.setAttribute('aria-pressed', on ? 'true' : 'false');
+});
+
+/* ═══ HANDS ═══ */
+function strike(e, first){
+  const r = cv.getBoundingClientRect();
+  const x = Math.floor((e.clientX - r.left) / S), y = Math.floor((e.clientY - r.top) / S);
+  if (x < 0 || y < 0 || x >= C || y >= R) return;
+  const i = y * C + x, now = performance.now();
+  if (g[i] === 2 || g[i] === 1){ set(g, i, 3, now); t[i] = 0; }
+  if (first) glow(i);
+}
+let down = false;
+cv.addEventListener('pointerdown', e => { down = true; strike(e, true); });
+cv.addEventListener('pointermove', e => { if (down) strike(e, false); });
+addEventListener('pointerup', () => { down = false; });
+$('gr').addEventListener('input', function(){ $('grv').textContent = this.value; });
+$('li').addEventListener('input', function(){ $('liv').textContent = this.value; });
+$('rain').addEventListener('click', function(){ rain = !rain; this.textContent = 'rain: ' + (rain ? 'on' : 'off'); });
+const pauseBtn = $('pause');
+pauseBtn.textContent = run ? 'pause' : 'play';
+pauseBtn.addEventListener('click', function(){ run = !run; this.textContent = run ? 'pause' : 'play'; });
+$('reset').addEventListener('click', reset);
+// the grid depends on the width, so a real change of width starts a new stand
+let lastW = 0, rs = 0;
+addEventListener('resize', () => {
+  clearTimeout(rs);
+  rs = setTimeout(() => { if (cv.clientWidth !== lastW){ lastW = cv.clientWidth; reset(); } }, 300);
+});
+
+reset(); lastW = cv.clientWidth;
+requestAnimationFrame(draw);
+setInterval(() => { if (run && !document.hidden) step(); }, TICK);
+})();
+</script>
+<script src="shell.js"></script>
+<script src="walk.js"></script>
+</body>
+</html>

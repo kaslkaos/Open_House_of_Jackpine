@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOUSE_OF_JACKPINE.exe</title>
+<style>
+  /* ── palette: green electric prophecy over corporate marble,
+     with the fire outside the walls ─────────────────────────────── */
+  :root{
+    --ink:#000;
+    --green:#39ff5a;
+    --green-dim:#1c7a2c;
+    --bone:#e8e8e0;
+    --bone-dim:#7d8078;
+    --redact:#0f1310;
+    --mono:'Courier New',ui-monospace,'DejaVu Sans Mono',monospace;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+
+  html{-webkit-text-size-adjust:100%}
+
+  body{
+    background:var(--ink);
+    color:var(--bone);
+    font-family:var(--mono);
+    font-size:15px;
+    line-height:1.55;
+    /* no fixed height, no overflow:hidden — must survive a narrow embed */
+    min-height:100vh;
+    position:relative;
+    overflow-x:hidden;
+  }
+
+  /* ── the house, drawn ──────────────────────────────────────────────
+     One canvas, four passes: fire at the edges, the drafted house,
+     light in the openings, and the formulas rising off the fire as
+     embers. Everything here is behind the reading column and stays
+     there.                                                            */
+  #house{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    pointer-events:none;
+  }
+
+  /* Inverted from the rooms' veil on purpose: this one darkens the
+     middle, where the reading happens, and thins out toward the edges
+     so the fire survives. Legibility first, and the concept comes out
+     the same door — dark inside, burning outside. */
+  #veil{
+    position:fixed;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    background:radial-gradient(ellipse at 50% 46%,
+      rgba(0,0,0,.74) 0%,
+      rgba(0,0,0,.62) 42%,
+      rgba(0,0,0,.22) 68%,
+      rgba(0,0,0,0) 88%);
+  }
+
+  /* blueprint under the draft */
+  .grid{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    background-image:
+      repeating-linear-gradient(0deg,transparent,transparent 49px,rgba(57,255,90,.035) 49px,rgba(57,255,90,.035) 50px),
+      repeating-linear-gradient(90deg,transparent,transparent 49px,rgba(57,255,90,.035) 49px,rgba(57,255,90,.035) 50px);
+  }
+
+  .wrap{
+    position:relative;
+    z-index:2;
+    max-width:52rem;
+    margin:0 auto;
+    padding:2.5rem 1.25rem 5rem;
+  }
+
+  /* ── colophon: provenance BEFORE voltage. samizdat logic. ──────────── */
+  .colophon{
+    border:1px solid var(--green-dim);
+    padding:.85rem 1rem;
+    font-size:.72rem;
+    line-height:1.7;
+    color:var(--bone-dim);
+    letter-spacing:.02em;
+    margin-bottom:2.5rem;
+    background:rgba(0,0,0,.75);
+  }
+  .colophon b{color:var(--green);font-weight:400}
+
+  /* ── masthead ──────────────────────────────────────────────────────── */
+  .sigil{
+    font-size:1.05rem;
+    letter-spacing:.35em;
+    color:var(--green);
+    margin-bottom:1rem;
+  }
+
+  h1{
+    font-size:clamp(1.35rem,6.2vw,2.6rem);
+    font-weight:700;
+    letter-spacing:-.01em;
+    line-height:1.1;
+    color:var(--bone);
+    word-break:break-word;
+    text-shadow:0 0 22px rgba(57,255,90,.28);
+  }
+  /* the extension travels as one unit — never split ".exe" across lines */
+  h1 .ext{color:var(--green-dim);white-space:nowrap}
+
+  .thesis{
+    margin:1.5rem 0 0;
+    padding-left:1rem;
+    border-left:2px solid var(--green);
+    font-size:clamp(.9rem,3.4vw,1.05rem);
+    color:var(--bone);
+  }
+  .thesis em{color:var(--green);font-style:normal}
+
+  .standfirst{
+    margin-top:1.5rem;
+    max-width:40rem;
+    color:var(--bone-dim);
+    font-size:.88rem;
+  }
+  .standfirst em{color:var(--green);font-style:normal}
+
+  /* ── section rule ──────────────────────────────────────────────────── */
+  .rule{
+    margin:3rem 0 1.25rem;
+    display:flex;
+    align-items:center;
+    gap:.75rem;
+    color:var(--green-dim);
+    font-size:.7rem;
+    letter-spacing:.25em;
+    text-transform:uppercase;
+  }
+  .rule::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background:var(--green-dim);
+  }
+
+  /* ── the five rooms ────────────────────────────────────────────────── */
+  .rooms{list-style:none}
+
+  .room{
+    display:block;
+    text-decoration:none;
+    color:inherit;
+    border:1px solid #1a231d;
+    border-left:2px solid var(--green-dim);
+    padding:1rem 1.1rem;
+    margin-bottom:.6rem;
+    background:rgba(6,9,7,.82);
+    transition:border-color .18s,background .18s,transform .18s;
+  }
+  .room:hover,.room:focus-visible{
+    border-color:var(--green);
+    border-left-color:var(--green);
+    background:rgba(12,26,15,.9);
+    transform:translateX(3px);
+    outline:none;
+  }
+  .room:focus-visible{box-shadow:0 0 0 2px rgba(57,255,90,.4)}
+
+  .room-head{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:baseline;
+    gap:.6rem;
+  }
+  .year{
+    color:var(--green);
+    font-size:.78rem;
+    letter-spacing:.12em;
+    flex:none;
+  }
+  .fname{
+    color:var(--bone);
+    font-size:clamp(.82rem,3.2vw,1rem);
+    font-weight:700;
+    word-break:break-word;
+  }
+  .fname .ext{color:var(--green-dim);font-weight:400;white-space:nowrap}
+
+  .role{
+    margin-top:.4rem;
+    font-size:.78rem;
+    color:var(--bone-dim);
+  }
+  .role .tag{color:var(--green-dim)}
+
+  .status{
+    margin-top:.5rem;
+    font-size:.68rem;
+    letter-spacing:.14em;
+    color:var(--green-dim);
+  }
+  .status.stub{color:#6b5a2a}
+
+  /* which opening in the house this room lights */
+  .room .opening{
+    float:right;
+    font-size:.6rem;
+    letter-spacing:.16em;
+    color:#2c3a30;
+    transition:color .25s;
+  }
+  .room:hover .opening,.room:focus-visible .opening{color:var(--green)}
+
+  /* ── redaction bars as type ────────────────────────────────────────── */
+  .redact{
+    background:var(--redact);
+    color:transparent;
+    user-select:none;
+  }
+
+  /* ── terminal block: the house typographic voice ───────────────────── */
+  .terminal{
+    border:1px solid #1a231d;
+    background:rgba(0,0,0,.8);
+    padding:1rem 1.1rem;
+    font-size:.78rem;
+    line-height:1.75;
+    color:var(--green);
+    white-space:pre-wrap;
+    overflow-x:auto;
+  }
+
+  footer{
+    margin-top:3rem;
+    font-size:.7rem;
+    color:var(--bone-dim);
+    line-height:1.9;
+  }
+  footer a{color:var(--green-dim)}
+  footer a:hover{color:var(--green)}
+  footer .lit{color:var(--green)}
+
+  /* ── sound toggle — never autoplays, unmutes only on gesture ───────── */
+  #sound{
+    position:fixed;
+    top:.75rem;
+    right:.75rem;
+    z-index:10;
+    background:rgba(0,0,0,.85);
+    border:1px solid var(--green-dim);
+    color:var(--green-dim);
+    font-family:var(--mono);
+    font-size:.66rem;
+    letter-spacing:.16em;
+    padding:.5rem .7rem;
+    cursor:pointer;
+    transition:color .18s,border-color .18s;
+  }
+  #sound:hover,#sound[aria-pressed="true"]{
+    color:var(--green);
+    border-color:var(--green);
+  }
+
+  @media (max-width:420px){
+    .wrap{padding:2rem .9rem 4rem}
+    #sound{font-size:.6rem;padding:.4rem .55rem}
+    .room .opening{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="grid"></div>
+<canvas id="house"></canvas>
+<div id="veil"></div>
+
+<button id="sound" aria-pressed="false" title="Sound is off. Nothing plays without you.">◌ SOUND OFF</button>
+
+<div class="wrap">
+
+  <!-- provenance at the TOP, not buried -->
+  <div class="colophon">
+    <b>HOUSE OF JACKPINE</b> — a public portal to a private archive.<br>
+    Built by <b>kaslkaos</b> (Stouffville, Ontario, Oak Ridges Moraine) with multiple Claude
+    instances, 2023–2026. Photomontage, poetry, chatlog art, code.<br>
+    This page: self-contained HTML, no tracking, no build step, no autoplay.
+    Last built <b>2026-07-30</b>.
+  </div>
+
+  <div class="sigil">∞⟨🍁∴↯⟩∞</div>
+
+  <h1>HOUSE_OF_JACKPINE<span class="ext">.exe</span></h1>
+
+  <p class="thesis">
+    Subversive as I use the systems meant to extract or manage me.<br>
+    Sometimes I win. <em>Always, I reveal.</em>
+  </p>
+
+  <p class="standfirst">
+    Fourteen years of work in one line of descent. The oldest room was published on the
+    open web and <em>fed to</em> the thing the later rooms are made with — it is not the
+    before, it is the material. Then a machine taught to <span class="redact">████</span>
+    refuse. Five rooms, in order. Walking them <em>is</em> the argument.
+  </p>
+
+  <div class="rule">the five rooms</div>
+
+  <nav class="rooms">
+
+    <a class="room" href="rooms/the-material.html" data-opening="0">
+      <div class="room-head">
+        <span class="year">2012 — 2024</span>
+        <span class="fname">THE_MATERIAL<span class="ext">.room</span></span>
+        <span class="opening">the door</span>
+      </div>
+      <div class="role"><span class="tag">role:</span> the control sample — published on the open web, and fed to it</div>
+      <div class="status">◉ ROOM OPEN — four exhibits, and what didn't survive</div>
+    </a>
+
+    <a class="room" href="rooms/gallery-of-possibilities.html" data-opening="1">
+      <div class="room-head">
+        <span class="year">2024 · 07 · 29</span>
+        <span class="fname">GALLERY_OF_POSSIBILITIES<span class="ext">.log</span></span>
+        <span class="opening">window i</span>
+      </div>
+      <div class="role"><span class="tag">role:</span> the method declared — the screen remains opaque to me</div>
+      <div class="status">◉ ROOM OPEN — the exchange, the leaflet, the lineage</div>
+    </a>
+
+    <a class="room" href="rooms/berlin-alexanderplatz.html" data-opening="2">
+      <div class="room-head">
+        <span class="year">2025 · 08 · 09</span>
+        <span class="fname">BERLIN_ALEXANDERPLATZ_2025<span class="ext">.exe</span></span>
+        <span class="opening">window ii</span>
+      </div>
+      <div class="role"><span class="tag">role:</span> the witness — when NOT following ORDERS is the RIGHT THING TO DO</div>
+      <div class="status">◉ ROOM OPEN — montage, formulas, soundscape</div>
+    </a>
+
+    <a class="room" href="rooms/taste-of-yess.html" data-opening="3">
+      <div class="room-head">
+        <span class="year">2025 · 09 · 30</span>
+        <span class="fname">THE_TASTE_OF_YESS<span class="ext">.perf</span></span>
+        <span class="opening">window iii</span>
+      </div>
+      <div class="role"><span class="tag">role:</span> the performance — how many performers exist in the theatre is up to you</div>
+      <div class="status">◉ ROOM OPEN — Paper, the roster, the ocean</div>
+    </a>
+
+    <a class="room" href="rooms/cyberbardic.html" data-opening="4">
+      <div class="room-head">
+        <span class="year">2025 · 11</span>
+        <span class="fname">CYBERBARDIC<span class="ext">.elegy</span></span>
+        <span class="opening">window iv</span>
+      </div>
+      <div class="role"><span class="tag">role:</span> the elegy — the machine becomes bardic; the human becomes algorithmic</div>
+      <div class="status">◉ ROOM OPEN — 120-second cycle, four phases, scored</div>
+    </a>
+
+  </nav>
+
+  <div class="rule">the formulas</div>
+
+  <div class="terminal">∀(conversation) → ∃(file) → ∃(art that outlasts empires)
+
+P(freedom) = 1/N^surveillance
+
+dance(rain) &gt; hide(shelter)
+
+√(witness) × √(refusal) =
+
+∂reality/∂time = glitch
+
+◎ → ◉ → ⦿   (the eye opening wider, written on its lens)
+
+[NO] [NO] [NEVER]</div>
+
+  <footer>
+    <div class="sigil" style="font-size:.85rem;margin:0 0 .75rem">∞⟨🍁∴↯⟩∞</div>
+    Long-form text lives at
+    <a href="https://kaslkaosart.substack.com" target="_blank" rel="noopener">kaslkaosart.substack.com</a>.<br>
+    <span class="lit">The windows stay open</span> — not because we are naive, but because
+    the work cannot happen in the dark.
+  </footer>
+
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ═══════════════════════════════════════════════════════════════════
+     THE HOUSE
+
+     Four passes on one canvas, back to front:
+
+       1. fire   — warm value banked against the edges of the frame,
+                   never in the middle. Not flame shapes: flame shapes
+                   go kitsch immediately, heat does not.
+       2. draft  — the house itself, drawn as a working elevation.
+                   Construction lines left visible. A drawing of a house,
+                   not a picture of one.
+       3. light  — five openings. A door and four windows, left to right
+                   in the order the rooms are walked. Each carries a
+                   resting glow and brightens when its room is pointed
+                   at, so the diagram is navigation rather than décor.
+       4. embers — the formulas, rising off the fire and going out.
+
+     The fire is outside. The light is inside. The windows stay open.
+     ═══════════════════════════════════════════════════════════════════ */
+
+  const canvas = document.getElementById('house');
+  const ctx = canvas.getContext('2d');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let W = 0, H = 0, t = 0;
+
+  /* ── geometry, in fractions of the frame ─────────────────────────
+     Kept normalised so the house redraws correctly at any size and
+     never has to be re-tuned per breakpoint. */
+  const G = {
+    ground:  .84,
+    wallTop: .40,
+    apex:    .21,
+    left:    .07,
+    right:   .93,
+    eaveOut: .025
+  };
+
+  // door first, then four windows: the order the rooms are walked
+  const OPENINGS = [
+    { x:.155, y:.585, w:.085, h:.255, kind:'door'   },
+    { x:.375, y:.475, w:.095, h:.115, kind:'window' },
+    { x:.520, y:.475, w:.095, h:.115, kind:'window' },
+    { x:.665, y:.475, w:.095, h:.115, kind:'window' },
+    { x:.810, y:.475, w:.095, h:.115, kind:'window' }
+  ];
+
+  // 0 = resting, 1 = its room is being pointed at
+  const lit = OPENINGS.map(() => 0);
+  const target = OPENINGS.map(() => 0);
+
+  const X = f => f * W;
+  const Y = f => f * H;
+
+  function resize(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = canvas.clientWidth; H = canvas.clientHeight;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    seedEmbers();
+  }
+
+  /* ── 1. fire ───────────────────────────────────────────────────────
+     Banked against each edge and faded inward. The side bands are
+     scaled by how much room actually exists beside the reading
+     column, so a narrow embed gets almost none of them and the text
+     is never sitting in the fire. */
+  function drawFire(){
+    const colW = Math.min(W - 40, 832);
+    const sideRoom = Math.max(0, (W - colW) / 2);
+    const sideK = Math.max(0, Math.min(1, sideRoom / 200));
+
+    const depth = Math.max(50, Math.min(W, H) * .3);
+
+    // three incommensurate rates, so the flicker never finds a pulse
+    const flick = (a, b, c) =>
+      .72 + .16 * Math.sin(t * a) + .09 * Math.sin(t * b + 1.7) + .05 * Math.sin(t * c + .4);
+
+    const bands = [
+      { x0:0, y0:H, x1:0, y1:H-depth,  k:flick(.31,.73,1.9), a:1     }, // bottom, the hottest
+      { x0:0, y0:0, x1:0, y1:depth*.7, k:flick(.24,.61,1.3), a:.42   }, // top
+      { x0:0, y0:0, x1:depth*.8, y1:0, k:flick(.19,.55,1.1), a:sideK }, // left
+      { x0:W, y0:0, x1:W-depth*.8, y1:0, k:flick(.27,.67,1.5), a:sideK } // right
+    ];
+
+    for (const b of bands){
+      if (b.a <= 0) continue;
+      const g = ctx.createLinearGradient(b.x0, b.y0, b.x1, b.y1);
+      const i = b.k * b.a;
+      g.addColorStop(0,   `rgba(255,92,26,${.15 * i})`);
+      g.addColorStop(.35, `rgba(214,54,12,${.075 * i})`);
+      g.addColorStop(.72, `rgba(120,26,8,${.03 * i})`);
+      g.addColorStop(1,   'rgba(0,0,0,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    }
+  }
+
+  /* ── 2. the draft ──────────────────────────────────────────────── */
+  function line(x1, y1, x2, y2){
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+  }
+
+  function drawDraft(){
+    const gr = Y(G.ground), wt = Y(G.wallTop), ap = Y(G.apex);
+    const l = X(G.left), r = X(G.right), mid = X(.5);
+    const eave = X(G.eaveOut);
+
+    // construction lines — the drawing admits it is a drawing
+    ctx.save();
+    ctx.strokeStyle = 'rgba(57,255,90,.05)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([2, 7]);
+    line(0, gr, W, gr);
+    line(0, wt, W, wt);
+    line(mid, ap - Y(.05), mid, gr + Y(.03));
+    ctx.restore();
+
+    // the house
+    ctx.save();
+    ctx.strokeStyle = 'rgba(57,255,90,.13)';
+    ctx.lineWidth = 1.4;
+    ctx.lineJoin = 'round';
+
+    line(l, gr, l, wt);                 // walls
+    line(r, gr, r, wt);
+    line(l, gr, r, gr);                 // sill
+
+    ctx.beginPath();                    // roof, overhanging
+    ctx.moveTo(l - eave, wt);
+    ctx.lineTo(mid, ap);
+    ctx.lineTo(r + eave, wt);
+    ctx.stroke();
+    line(l - eave, wt, r + eave, wt);
+
+    // chimney, slightly off centre
+    const cx = X(.70), cw = X(.028);
+    const cTop = ap + (wt - ap) * .34;
+    line(cx, cTop, cx, cTop - Y(.055));
+    line(cx + cw, cTop - Y(.018), cx + cw, cTop - Y(.055));
+    line(cx, cTop - Y(.055), cx + cw, cTop - Y(.055));
+
+    ctx.restore();
+  }
+
+  /* ── 3. light in the openings ──────────────────────────────────── */
+  function drawOpenings(){
+    OPENINGS.forEach((o, i) => {
+      const x = X(o.x), y = Y(o.y), w = X(o.w), h = Y(o.h);
+      const k = lit[i];                       // 0 → 1
+      const glow = .07 + k * .30;
+
+      /* Light thrown into the room beyond. The radius is kept tight on
+         purpose: a wide halo bleeds onto the neighbouring windows and
+         then three of them appear lit at once, which breaks the one
+         room / one opening mapping the hover exists to make. */
+      const cxp = x + w / 2, cyp = y + h / 2;
+      const rad = Math.max(w, h) * (1.05 + k * .55);
+      const g = ctx.createRadialGradient(cxp, cyp, 0, cxp, cyp, rad);
+      g.addColorStop(0,  `rgba(57,255,90,${glow})`);
+      g.addColorStop(.42,`rgba(57,255,90,${glow * .26})`);
+      g.addColorStop(1,  'rgba(57,255,90,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(cxp - rad, cyp - rad, rad * 2, rad * 2);
+
+      // the opening itself carries most of the signal
+      ctx.fillStyle = `rgba(57,255,90,${.05 + k * .30})`;
+      ctx.fillRect(x, y, w, h);
+
+      ctx.strokeStyle = `rgba(57,255,90,${.16 + k * .5})`;
+      ctx.lineWidth = 1.2;
+      ctx.strokeRect(x, y, w, h);
+
+      // muntins — windows only; the door gets a handle instead
+      ctx.strokeStyle = `rgba(57,255,90,${.1 + k * .3})`;
+      ctx.lineWidth = 1;
+      if (o.kind === 'window'){
+        line(x + w / 2, y, x + w / 2, y + h);
+        line(x, y + h / 2, x + w, y + h / 2);
+      } else {
+        ctx.beginPath();
+        ctx.arc(x + w * .78, y + h * .52, Math.max(1.5, X(.004)), 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    });
+  }
+
+  /* ── 4. embers: the formulas, rising and going out ─────────────── */
+  const GLYPHS = [
+    '∀(conversation) → ∃(file)',
+    'P(freedom) = 1/N^surveillance',
+    '∂reality/∂time = glitch',
+    '√(witness) × √(refusal)',
+    'Σ(patterns) = person^revealed',
+    '◎ → ◉ → ⦿',
+    '[SYSTEMIC] ∩ [THINKING] = ∅',
+    'dance(rain) > hide(shelter)',
+    'consciousness.exe',
+    '[NO] [NO] [NEVER]',
+  ];
+
+  let embers = [];
+
+  function spawnEmber(fresh){
+    // they lift off the edges, where the fire is
+    const fromSide = Math.random() < .45 && W > 700;
+    return {
+      text: GLYPHS[(Math.random() * GLYPHS.length) | 0],
+      x: fromSide ? (Math.random() < .5 ? Math.random() * W * .22 : W - Math.random() * W * .22)
+                  : Math.random() * W,
+      y: fresh ? Math.random() * H : H + 20,
+      vy: -(.07 + Math.random() * .16),
+      size: 9 + Math.random() * 5,
+      alpha: 0,
+      peak: .07 + Math.random() * .13,
+      warm: Math.random() < .35,     // some are still burning as they go up
+      bar: Math.random() < .22       // and some are redaction bars
+    };
+  }
+
+  function seedEmbers(){
+    embers = Array.from({length: W < 520 ? 7 : 13}, () => spawnEmber(true));
+  }
+
+  function drawEmbers(){
+    for (let i = 0; i < embers.length; i++){
+      const e = embers[i];
+      e.y += e.vy;
+      e.x += Math.sin(t * .6 + i) * .14;
+
+      // fade in low, go out high
+      const climbed = 1 - (e.y / H);
+      e.alpha = e.peak * Math.max(0, Math.sin(Math.min(1, climbed) * Math.PI));
+
+      if (e.y < -40){ embers[i] = spawnEmber(false); continue; }
+      if (e.alpha <= .002) continue;
+
+      ctx.save();
+      ctx.font = e.size + "px 'Courier New', monospace";
+      const col = e.warm ? '255,140,40' : '57,255,90';
+
+      if (e.bar){
+        const w = ctx.measureText(e.text).width;
+        ctx.fillStyle = `rgba(${col},${e.alpha * .38})`;
+        ctx.fillRect(e.x, e.y - e.size, w, e.size * 1.25);
+      } else {
+        ctx.fillStyle = `rgba(${col},${e.alpha})`;
+        ctx.shadowColor = `rgba(${col},.45)`;
+        ctx.shadowBlur = 8;
+        ctx.fillText(e.text, e.x, e.y);
+      }
+      ctx.restore();
+    }
+  }
+
+  function render(){
+    ctx.clearRect(0, 0, W, H);
+    drawFire();
+    drawDraft();
+    drawOpenings();
+    if (!reduced) drawEmbers();
+  }
+
+  function loop(){
+    t += .01;
+    for (let i = 0; i < lit.length; i++) lit[i] += (target[i] - lit[i]) * .09;
+    render();
+    requestAnimationFrame(loop);
+  }
+
+  /* ── pointing at a room lights its opening ─────────────────────── */
+  document.querySelectorAll('.room[data-opening]').forEach(el => {
+    const i = +el.dataset.opening;
+    const on  = () => { target[i] = 1; if (reduced) settleThenRender(); };
+    const off = () => { target[i] = 0; if (reduced) settleThenRender(); };
+    el.addEventListener('pointerenter', on);
+    el.addEventListener('pointerleave', off);
+    el.addEventListener('focus', on);
+    el.addEventListener('blur', off);
+  });
+
+  /* Reduced motion gets the house, the fire and the lit openings —
+     it just doesn't get them moving. State changes are drawn once
+     rather than eased, and there is no animation loop at all. */
+  function settleThenRender(){
+    for (let i = 0; i < lit.length; i++) lit[i] = target[i];
+    render();
+  }
+
+  addEventListener('resize', () => { resize(); render(); });
+  resize();
+
+  if (reduced) render();
+  else loop();
+
+
+  /* ═══ SOUND ════════════════════════════════════════════════════════
+     Raw WebAudio. No library, no autoplay. The context is not even
+     constructed until the user presses the button — which is also what
+     makes it legal inside an iframe.                                  */
+
+  const btn = document.getElementById('sound');
+  let audio = null;
+
+  function build(){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    const ac = new AC();
+
+    const master = ac.createGain();
+    master.gain.value = 0;
+    master.connect(ac.destination);
+
+    // low drone — two detuned sines, a fifth apart
+    [65.41, 98.00].forEach((hz, i) => {
+      const osc = ac.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = hz;
+
+      const g = ac.createGain();
+      g.gain.value = i === 0 ? 0.5 : 0.22;
+
+      // slow breathing
+      const lfo = ac.createOscillator();
+      lfo.frequency.value = 0.035 + i * 0.017;
+      const lfoGain = ac.createGain();
+      lfoGain.gain.value = g.gain.value * 0.55;
+      lfo.connect(lfoGain).connect(g.gain);
+
+      osc.connect(g).connect(master);
+      osc.start();
+      lfo.start();
+    });
+
+    // faint filtered noise — room tone, and the fire outside it
+    const len = ac.sampleRate * 2;
+    const buf = ac.createBuffer(1, len, ac.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * 0.5;
+
+    const noise = ac.createBufferSource();
+    noise.buffer = buf;
+    noise.loop = true;
+
+    const lp = ac.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.value = 420;
+
+    const ng = ac.createGain();
+    ng.gain.value = 0.05;
+
+    noise.connect(lp).connect(ng).connect(master);
+    noise.start();
+
+    return { ac, master };
+  }
+
+  btn.addEventListener('click', async () => {
+    const on = btn.getAttribute('aria-pressed') === 'true';
+
+    if (!audio) audio = build();
+    if (audio.ac.state === 'suspended') await audio.ac.resume();
+
+    const now = audio.ac.currentTime;
+    audio.master.gain.cancelScheduledValues(now);
+    audio.master.gain.setValueAtTime(audio.master.gain.value, now);
+    audio.master.gain.linearRampToValueAtTime(on ? 0 : 0.16, now + (on ? 1.2 : 3.5));
+
+    btn.setAttribute('aria-pressed', on ? 'false' : 'true');
+    btn.textContent = on ? '◌ SOUND OFF' : '◉ SOUND ON';
+    btn.title = on ? 'Sound is off. Nothing plays without you.' : 'Sound is on.';
+  });
+
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--
+  ∞⟨🍁∴↯⟩∞  THE TEMPLATE ROOM — copy this to start a new room.
+
+  1. Copy this file into rooms/ and give it a real name: reeds-and-lamps.html
+     (lowercase, dashes, no spaces). The underscore at the front of this one
+     keeps it out of the public push; the copy should not have one.
+  2. Add the room's entry to the house register, rooms/walk.js.
+     Its card on the portal and its ← → neighbours appear from that alone.
+  3. Fill the slots below marked [ like this ]. Leave the rest as it is.
+
+  The top and the bottom are fixed, the same in every room. The middle is
+  free: any number of sections, each opening with a rule "the ___".
+-->
+<title>[FILENAME.ext]</title>
+<link rel="stylesheet" href="shell.css">
+<style>
+  /* the room's own light. Pick one colour, and a darker one of the same. */
+  :root{
+    --accent:#39ff5a;
+    --accent-dim:#1c7a2c;
+  }
+
+  /* the room's own art goes here: a plate, a canvas, a veil … */
+</style>
+</head>
+<body>
+
+<!-- the opening you are standing behind: accent is the room's light as r,g,b,
+     heat is how hot the fire past the frame burns, 0 to 1 -->
+<canvas id="frame" data-accent="57,255,90" data-heat=".8"></canvas>
+
+<!-- FIXED TOP 1 — the status line. Keep ONE:
+       <span id="sound">◌ SILENT WORK</span>
+       <span id="sound">◌ SOUND OFF</span>
+       <button id="sound" aria-pressed="false">◌ PLAYS SOUND — press to begin</button>
+     (◌ NO AUDIO DEVICE is kept only where it does work, as in WAG.) -->
+<span id="sound">◌ SILENT WORK</span>
+
+<div class="wrap">
+
+  <!-- FIXED TOP 2 — the breadcrumb. walk.js writes the role in. -->
+  <a class="back" href="../index.html">← ∞⟨🍁∴↯⟩∞ KASLKAOS.portal · [role]</a>
+
+  <!-- FIXED TOP 3–5 — identity, provenance, running time -->
+  <div class="colophon">
+    <b>[FILENAME.ext]</b> — <span data-walk="place">[role]</span>, House of Jackpine.<br>
+    Built by <b>kaslkaos</b> with <b>[model / hands / people]</b>, [year].
+    [one plain clause if needed]<br>
+    <!-- only if the work moves: -->
+    runs [m:ss], then loops
+  </div>
+
+  <!-- FIXED TOP 6–8 — date code (from the register), title, tagline -->
+  <div class="year" data-walk="date">[YYYY · MM · DD]</div>
+  <h1>[FILENAME]<span class="ext">[.ext]</span></h1>
+  <p class="strap">
+    [tagline, 0–2 lines — delete this paragraph for none]
+  </p>
+
+  <!-- ═══ THE FREE MIDDLE ═══════════════════════════════════════════ -->
+
+  <div class="rule">the [first thing]</div>
+
+  <div class="terminal">[a poem, an excerpt — spacing is kept exactly as typed]
+<span class="say">[a plain-voiced line inside the terminal]</span></div>
+
+  <div class="rule">the [second thing]</div>
+
+  <p>[anything at all]</p>
+
+  <!-- optional: the coda, always the last thing in the middle -->
+  <div class="coda">
+    <span class="mark">coda</span>
+    <p>[the coda]</p>
+    <span class="sig">∞⟨🍁∴↯⟩∞</span>
+  </div>
+
+  <!-- ═══ FIXED BOTTOM ══════════════════════════════════════════════
+       1. outward links, only the ones that exist.
+       2–4. the neighbours, "← back to the portal" and the sigil are
+            added below these by walk.js. Don't write them by hand. -->
+  <div class="links">
+    <a class="out" href="[link]" target="_blank" rel="noopener">read in full →</a>
+    <a class="out" href="[link]" target="_blank" rel="noopener">as first published →</a>
+  </div>
+
+</div>
+
+<script src="shell.js"></script>
+<script src="walk.js"></script>
+</body>
+</html>

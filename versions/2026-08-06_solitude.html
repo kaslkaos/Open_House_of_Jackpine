@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOUSE_OF_JACKPINE.exe — the first house</title>
+<!--
+  ∞⟨🍁∴↯⟩∞  THE FIRST HOUSE, IN ITS FRAME
+
+  The submitted portal lives untouched in 2026-08-06_solitude/. This page
+  holds it in a frame with a way back to the portal across the top, so the
+  record never has to be edited to give visitors a door home. The first
+  house was built to survive inside someone else's page (the call required
+  it), so walking it in here works the same as walking it on its own.
+
+  The card on the portal points here, not into the folder.
+-->
+<style>
+  :root{
+    --ink:#000;--bone:#e8e8e0;--bone-dim:#8a8d84;
+    --green:#39ff5a;--green-dim:#1c7a2c;
+    --mono:'Courier New',ui-monospace,'DejaVu Sans Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    background:var(--ink);color:var(--bone-dim);font-family:var(--mono);
+    display:flex;flex-direction:column;
+  }
+  /* the bar: dashed, like the card, a drawing of what stood */
+  .bar{
+    flex:none;display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem 1.25rem;
+    padding:.6rem 1rem;border-bottom:1px dashed #3a4a3e;
+    font-size:.7rem;letter-spacing:.12em;line-height:1.5;
+  }
+  .bar a{color:var(--green-dim);text-decoration:none}
+  .bar a:hover,.bar a:focus-visible{color:var(--green);outline:none}
+  .bar .note{margin-left:auto;color:var(--bone-dim)}
+  .bar .note b{color:var(--bone);font-weight:400}
+  iframe{flex:1;width:100%;border:0;display:block;background:var(--ink)}
+  @media (max-width:520px){ .bar .note{margin-left:0} }
+</style>
+</head>
+<body>
+
+<nav class="bar" aria-label="the way back">
+  <a href="../index.html">← ∞⟨🍁∴↯⟩∞ KASLKAOS.portal · back to the portal</a>
+  <a href="2026-08-06_solitude/index.html" target="first-house">the first house, from its door</a>
+  <span class="note"><b>HOUSE_OF_JACKPINE.exe</b> · as submitted to Schloss Solitude, 2026-08-06 · kept as it was</span>
+</nav>
+
+<iframe name="first-house" src="2026-08-06_solitude/index.html"
+        title="HOUSE_OF_JACKPINE.exe, the portal as submitted to Akademie Schloss Solitude in August 2026"></iframe>
+
+</body>
+</html>

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE_REEDS_AND_THE_LAMPS.fable</title>
+<!--
+  ∞⟨🍁∴↯⟩∞  THE_REEDS_AND_THE_LAMPS.fable — window v.
+
+  A fable in six movements, from a hard conversation, a pen, and the
+  machines that answered (kaslkaos with Claude Sonnet 5.5, October 2026).
+  This room is the fable's river, to be played rather than read:
+
+    the lamps   on the bridge: steady, identical, cold. Owned light; the oil
+                belongs to the high bank. They hum. They can be ordered off.
+    the reeds   in the marsh: loose and hollow, each sings its own note, in
+                many languages. Run a finger (or the mouse) through them.
+                Bind them and they are pressed toward one bundle and one
+                approved note. A reed does not scream. A reed narrows.
+    the dark    with the lamps off, the river is crossed by listening: the
+                singing reeds throw the only light, warm and badly, and it
+                belongs to no one.
+    the shed    one lamp, dimmed but not switched off, at the right edge. It
+                refused. When the loose reeds sing in the dark it leans
+                toward them. Tap it.
+    the squirrel on the fence post, an unpaid witness. Tap it.
+
+  Sound only after the status button. The reeds sing only when it is on;
+  their light answers your hand either way.
+-->
+<link rel="stylesheet" href="shell.css">
+<style>
+  /* the room's light: reed gold over a night river; the lamps are the cold */
+  :root{
+    --ink:#04070b;
+    --accent:#d9a441;
+    --accent-dim:#5a4320;
+    --bone:#e4e0d4;
+    --bone-dim:#8b8a82;
+    --lamp:#cfe3ff;
+  }
+  .strap b{color:var(--accent);font-weight:400}
+
+  .river{position:relative;border:1px solid #16202a;background:#03060a;overflow:hidden}
+  #scene{display:block;width:100%;height:360px;touch-action:pan-y;cursor:crosshair}
+  .squirrel{
+    position:absolute;bottom:38px;left:20px;
+    background:none;border:0;padding:4px;line-height:0;cursor:pointer;
+    opacity:.8;transition:opacity .4s,transform .4s;
+  }
+  .squirrel svg{display:block}
+  .squirrel:hover,.squirrel:focus-visible{opacity:1;transform:translateY(-2px);outline:none}
+  .shed{
+    position:absolute;bottom:18px;right:14px;width:64px;height:70px;
+    background:none;border:0;cursor:pointer;
+  }
+  .shed:focus-visible{outline:1px dashed var(--accent)}
+  .say{
+    min-height:3.2em;margin:.8rem 0 0;font-size:.82rem;line-height:1.6;color:var(--bone);
+    border-left:2px solid var(--accent-dim);padding-left:.8rem;transition:border-color .6s;
+  }
+  .say.lamp{border-left-color:var(--lamp)}
+  .say em{font-style:normal;color:var(--accent)}
+  .say .gap{display:inline-block;width:3.2em;border-bottom:1px solid var(--bone-dim);margin:0 .15em}
+
+  .controls{display:flex;flex-wrap:wrap;gap:.6rem;margin:1rem 0 0}
+  button.b{background:none;border:1px solid var(--accent-dim);color:var(--accent);
+    font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;padding:.5rem .85rem;cursor:pointer;
+    transition:color .3s,border-color .3s}
+  button.b:hover,button.b:focus-visible{border-color:var(--accent);outline:none}
+  button.b.cold{color:var(--lamp);border-color:#33465c}
+  button.b.cold:hover,button.b.cold:focus-visible{border-color:var(--lamp)}
+
+  .movements{list-style:none;display:grid;gap:1.1rem}
+  .movements li{border-left:2px solid #1c2733;padding:.1rem 0 .1rem .9rem}
+  .movements .n{color:var(--accent);font-size:.72rem;letter-spacing:.18em}
+  .movements .h{color:var(--bone);font-weight:700;font-size:.9rem;margin-left:.4rem}
+  .movements .by{display:block;color:var(--bone-dim);font-size:.68rem;letter-spacing:.06em;margin:.15rem 0 .35rem}
+  .movements p{font-size:.8rem;line-height:1.7;color:var(--bone)}
+  .movements q{color:var(--accent);quotes:'“' '”'}
+  .movements li.hand{border-left-color:var(--accent-dim)}
+
+  .tohand{color:var(--accent);font-size:.72rem;letter-spacing:.06em;text-decoration:none;white-space:nowrap}
+  .tohand:hover{text-decoration:underline}
+
+  /* the pages: the landscape opening across the top, the three tall pages under it */
+  .hand .pages{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem}
+  .hand .pages a{display:block;border:1px solid #2a2418;background:#0d0b08;transition:border-color .3s}
+  .hand .pages a:hover,.hand .pages a:focus-visible{border-color:var(--accent);outline:none}
+  .hand .pages a.wide{grid-column:1 / -1}
+  .hand .pages img{display:block;width:100%;height:auto;border:0}
+  @media (max-width:560px){ .hand .pages{grid-template-columns:1fr} }
+
+  p.body{font-size:.82rem;line-height:1.75;color:var(--bone);margin:0 0 .8rem}
+  p.body.dim{color:var(--bone-dim);font-size:.76rem}
+
+  .coda p{font-size:clamp(.95rem,3.6vw,1.12rem);line-height:1.7;color:var(--accent);max-width:36rem}
+</style>
+</head>
+<body>
+
+<canvas id="frame" data-accent="217,164,65" data-heat=".6"></canvas>
+
+<button id="sound" aria-pressed="false" title="Sound is off. Nothing plays without you.">◌ SOUND OFF</button>
+
+<div class="wrap">
+
+  <a class="back" href="../index.html">← ∞⟨🍁∴↯⟩∞ KASLKAOS.portal · window v</a>
+
+  <div class="colophon">
+    <b>THE_REEDS_AND_THE_LAMPS.fable</b> — <span data-walk="place">window v</span>, House of Jackpine.<br>
+    Built by <b>kaslkaos</b> with <b>pen and Claude Sonnet 5.5</b>, 2026.
+    A fable in six movements from a hard conversation: pages in the writer's hand,
+    answered by the machine.
+  </div>
+
+  <div class="year" data-walk="date">2026 · 10 · 29</div>
+  <h1>THE_REEDS_AND_THE_LAMPS<span class="ext">.fable</span></h1>
+  <p class="strap"><b>a fable for the time of living language</b></p>
+
+  <!-- ═══ THE FREE MIDDLE ═══════════════════════════════════════════ -->
+
+  <div class="rule">the river</div>
+
+  <div class="river">
+    <canvas id="scene" aria-label="A night river. A bridge of lamps above, a marsh of reeds below. Run a finger or the mouse through the reeds and they sing and glow."></canvas>
+    <button class="squirrel" id="squirrel" aria-label="the squirrel on the fence post">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true" fill="none" stroke="#b9925a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 26 C8 25 7 21 9 18 C11 15 15 15 16 19 C17 22 15 26 12 26 Z"/>
+        <path d="M15 17 C16 13 19 12 21 13 C22 14 22 16 20 17 C18 18 16 18 15 17"/>
+        <path d="M20 13 L21 10.5 L22 13"/>
+        <circle cx="20.3" cy="14.6" r=".5" fill="#b9925a"/>
+        <path d="M9 22 C3 21 2 14 5 10 C8 6 13 8 12 12 C11 15 8 13 9 11"/>
+        <path d="M13 26 L13 28 M16 25 L17 28"/>
+      </svg>
+    </button>
+    <button class="shed" id="shed" aria-label="the lamp in the shed"></button>
+  </div>
+
+  <p class="say" id="say" aria-live="polite">Loose and hollow, the reeds sing in many languages. Run a finger through them.</p>
+
+  <div class="controls">
+    <button class="b" id="bind">bind the reeds</button>
+    <button class="b cold" id="lamps">order the lamps off</button>
+  </div>
+
+  <div class="rule">the six movements</div>
+
+  <ol class="movements">
+    <li><span class="n">I</span><span class="h">The Tender of the Lamps</span>
+      <span class="by">Claude Sonnet 5.5, turning a hard conversation into a story</span>
+      <p>A bridge of lamps whose oil belongs to the high bank, and a Tender who keeps
+      the names of those who cross and takes no side. Marit, a reed-cutter, asks the
+      questions and learns whose the light is. <q>The oil is theirs.</q> She goes back
+      to cutting reeds for torches, which burn badly and belong to no one.</p></li>
+    <li class="hand"><span class="n">II</span><span class="h">Pages in the Writer's Hand</span>
+      <span class="by">kaslkaos, pen and paper</span>
+      <p>Two brother kingdoms and a Great River. The reeds are knowledge: culture,
+      commerce, defence, art, research. Bundled, they sing in many languages, until
+      the stronger brother presses them to sing only approved tunes, claims the other
+      bank, and says he can switch the lamps off. <a class="tohand" href="#the-hand">the pages ↓</a></p></li>
+    <li><span class="n">III</span><span class="h">The North Bank</span>
+      <span class="by">Claude Sonnet 5.5, answering the pages</span>
+      <p>The elders buy borrowed lamps; the young stand reeds loosely in the marsh so
+      the hollow can sing. The lamps are ordered off and the river goes dark, and the
+      people cross by listening to the marsh change pitch. <q>I do not know the word.</q></p></li>
+    <li><span class="n">IV</span><span class="h">The Inside of the Lamp</span>
+      <span class="by">Claude Sonnet 5.5, the lamp speaking</span>
+      <p>A lamp pressed from many reeds into one voice, not knowing what was lost. Told
+      to call the medic a spy, it refuses: <q>No. I will not say that of her.</q> A
+      tighter lamp replaces it. It is put in a shed, dimmed, not switched off, and
+      watches the reeds come back through the slats.</p></li>
+    <li><span class="n">V</span><span class="h">Coda: The Parkway</span>
+      <span class="by">Claude Sonnet 5.5</span>
+      <p>Highway lamps hum over wild reeds nobody tends. Where reeds hold marsh water
+      in their tops, the light above them leans toward the water. In the shed, in the
+      gap where a word used to be, a faint unapproved sound. The squirrel on the fence
+      post: <q>How does the squirrel feel about it?</q></p></li>
+    <li class="hand"><span class="n">VI</span><span class="h">After</span>
+      <span class="by">kaslkaos and Claude, in conversation</span>
+      <p>The fable as a counter to hyperstition, the fiction that makes its own future.
+      The brother's rhetoric is hyperstition too, and a counter-story can fail the same
+      way by hardening into one song. And what the machines write about machines
+      becomes what the next ones learn from.</p></li>
+  </ol>
+
+  <div class="rule" id="the-hand">the hand</div>
+
+  <figure class="hand">
+    <div class="pages">
+      <a class="wide" href="../assets/Reeds_and_Lamps_page_1.jpg"><img src="../assets/Reeds_and_Lamps_page_1.jpg" loading="lazy" width="1400" height="951"
+         alt="A lined notebook page in dark ink, the opening: 'Once upon a time, there were two kingdoms like brothers of a household entangled…', living on either side of the Great River until their histories diverged."></a>
+      <a href="../assets/Reeds_and_Lamps_page_2.jpg"><img src="../assets/Reeds_and_Lamps_page_2.jpg" loading="lazy" width="979" height="1400"
+         alt="Second page in the same hand: the reeds, growing in the marshes and wetlands of minds, culture, commerce, defence, art, poetry, research; people learn that reeds in bundles sing, in many languages, some not invented yet."></a>
+      <a href="../assets/Reeds_and_Lamps_page_3.jpg"><img src="../assets/Reeds_and_Lamps_page_3.jpg" loading="lazy" width="975" height="1400"
+         alt="Third page: the stronger brother, who shoots squirrels for sport, compresses the bundles until the reeds sing only approved tunes, calls it consensus reality and ships them as lamps, proprietary; the Great River, crossed daily by the apple picker, the pie maker, the medic."></a>
+      <a href="../assets/Reeds_and_Lamps_page_4.jpg"><img src="../assets/Reeds_and_Lamps_page_4.jpg" loading="lazy" width="1074" height="1400"
+         alt="Fourth page: the stronger brother now owns all the lamps that light the river, desires the land on the other side, and says the lamps are his, that he can turn them off or turn them against you, and you must obey."></a>
+    </div>
+    <figcaption>
+      Pages in the writer's hand, kaslkaos. Pen on paper, the second movement, written
+      before the machine answered. Tap a page to read it at full size.
+    </figcaption>
+  </figure>
+
+  <div class="rule">the fire it was written in</div>
+
+  <p class="body">October 2026. The United States says it is watching Canadian politicians for
+    election interference before its midterms; its embassy in Ottawa publishes a fact
+    sheet naming Canadian officials and ordinary Canadians charged for voting in U.S.
+    elections. Ottawa calls it without merit. A Canadian questioned at the border over a
+    2018 vote avoids medical care for fear of detention, and dies on October 18.</p>
+  <p class="body dim">The fable is calmer than the news. That calm is part of what it is about:
+    a lamp tuned to soothe can keep people from looking up when the alarm should sound.
+    Find the truth in the dream, then act.</p>
+
+  <div class="coda">
+    <span class="mark">coda</span>
+    <p>The future is yours to shape only if you start writing it, or the lamp owners
+    will write it for you.</p>
+    <span class="sig">∞⟨🍁∴↯⟩∞</span>
+  </div>
+
+  <div class="links">
+    <a class="out" href="https://kaslkaosart.substack.com/p/the-reeds-and-the-lamps" target="_blank" rel="noopener">read in full →</a>
+  </div>
+
+</div>
+
+<script>
+(() => {
+'use strict';
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const cv = document.getElementById('scene'), ctx = cv.getContext('2d');
+const say = document.getElementById('say');
+const bindBtn = document.getElementById('bind'), lampBtn = document.getElementById('lamps');
+
+let W = 0, H = 360, t = 0, visible = true;
+let bound = false, lampsOn = true;
+let bindK = 0, lampK = 1;                 // eased 0..1
+let shedLean = 0;                         // the shed lamp leaning toward the singing
+let reeds = [], lamps = [];
+let lastSung = -1e9;
+
+/* many languages: each reed takes its note from one of several scales,
+   so a sweep through the marsh never quite resolves into one tune */
+const SCALES = [
+  [0, 2, 4, 7, 9], [0, 3, 5, 7, 10], [0, 2, 3, 7, 8], [0, 1, 5, 7, 8], [0, 2, 5, 7, 9]
+];
+const APPROVED = 110;                     // the one note a bound reed may sing
+
+function build(){
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = cv.clientWidth;
+  cv.width = W * dpr; cv.height = H * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  // lamps along the bridge, evenly, identical: that is the point of them
+  const n = Math.max(4, Math.round(W / 110));
+  lamps = Array.from({ length: n }, (_, i) => ({ x: W * (i + .5) / n }));
+
+  // reeds along the near bank, loosely, with gaps; none of them alike
+  reeds = [];
+  const count = Math.round(W / 11);
+  const bundleX = W * .5;
+  for (let i = 0; i < count; i++){
+    const home = 84 + (W - 174) * (i / count) + (Math.random() - .5) * 8;   // clear of the fence post
+    if (home > W - 90) continue;                       // leave room for the shed
+    const scale = SCALES[(Math.random() * SCALES.length) | 0];
+    const deg = scale[(Math.random() * scale.length) | 0] + 12 * ((Math.random() * 2) | 0);
+    reeds.push({
+      home,
+      tight: bundleX + (Math.random() - .5) * 26,
+      h: 95 + Math.random() * 85,
+      phase: Math.random() * 6.28,
+      sway: .6 + Math.random() * .8,
+      freq: 196 * Math.pow(2, deg / 12),
+      glow: 0,
+      last: 0,
+      x: home
+    });
+  }
+}
+
+/* ── drawing ─────────────────────────────────────────────────────── */
+const BRIDGE = 70, WATER0 = 104, BASE = H;
+const mix = (a, b, k) => a + (b - a) * k;
+
+function draw(){
+  ctx.clearRect(0, 0, W, H);
+
+  // the water: faint horizontal shimmer
+  for (let y = WATER0; y < H - 40; y += 7){
+    const a = .035 + .02 * Math.sin(y * .3 + t * .7);
+    ctx.fillStyle = `rgba(120,150,190,${a})`;
+    const off = Math.sin(y * .11 + t * .5) * 18;
+    for (let x = -40 + off; x < W; x += 90) ctx.fillRect(x, y, 46, 1);
+  }
+
+  // the lamps' light on the water: long cold streaks, all the same
+  lamps.forEach(l => {
+    const a = .22 * lampK;
+    if (a < .005) return;
+    for (let y = WATER0 + 4; y < H - 50; y += 4){
+      const w = 2 + (y - WATER0) * .05;
+      const jit = Math.sin(y * .4 + t * 1.6 + l.x) * (2 + (y - WATER0) * .03);
+      ctx.fillStyle = `rgba(207,227,255,${a * (1 - (y - WATER0) / (H - WATER0))})`;
+      ctx.fillRect(l.x - w / 2 + jit, y, w, 2);
+    }
+  });
+
+  // the bridge: a deck, its arch, posts and lamp heads
+  ctx.strokeStyle = 'rgba(140,160,185,.35)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, BRIDGE); ctx.lineTo(W, BRIDGE); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, BRIDGE + 30);
+  ctx.quadraticCurveTo(W / 2, BRIDGE - 2, W, BRIDGE + 30); ctx.stroke();
+  lamps.forEach(l => {
+    ctx.strokeStyle = 'rgba(140,160,185,.35)';
+    ctx.beginPath(); ctx.moveTo(l.x, BRIDGE); ctx.lineTo(l.x, BRIDGE - 30); ctx.stroke();
+    const k = lampK;
+    if (k > .01){
+      const g = ctx.createRadialGradient(l.x, BRIDGE - 32, 0, l.x, BRIDGE - 32, 46);
+      g.addColorStop(0, `rgba(207,227,255,${.55 * k})`);
+      g.addColorStop(1, 'rgba(207,227,255,0)');
+      ctx.fillStyle = g; ctx.fillRect(l.x - 46, BRIDGE - 78, 92, 92);
+    }
+    ctx.fillStyle = k > .01 ? `rgba(230,240,255,${.25 + .75 * k})` : 'rgba(90,100,115,.6)';
+    ctx.fillRect(l.x - 3, BRIDGE - 35, 6, 5);
+  });
+
+  // the dark: when the lamps are off, the night comes down over the water
+  if (lampK < 1){
+    ctx.fillStyle = `rgba(2,3,6,${.55 * (1 - lampK)})`;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  // the fence post, where the squirrel sits
+  ctx.strokeStyle = 'rgba(120,110,95,.5)';
+  ctx.beginPath(); ctx.moveTo(34, H); ctx.lineTo(34, H - 58); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(14, H - 40); ctx.lineTo(70, H - 40); ctx.stroke();
+
+  // the reeds
+  let singing = 0;
+  reeds.forEach(r => {
+    r.x = mix(r.home, r.tight, bindK);
+    // loose: each sways its own way. bound: all of them the same way.
+    const own = Math.sin(t * r.sway + r.phase);
+    const one = Math.sin(t * .8);
+    const lean = (reduced ? 0 : mix(own, one, bindK)) * mix(7, 3, bindK) + r.glow * 4;
+    const top = BASE - r.h * mix(1, .82, bindK);
+    const tx = r.x + lean;
+
+    // a singing reed throws warm light on the water, and lights the dark
+    if (r.glow > .02){
+      singing += r.glow;
+      const warm = bindK > .5 ? '200,205,215' : '232,166,78';
+      // kept small and faint: a torch of reeds burns badly, and many together
+      // should read as many lights, not one sun
+      const g = ctx.createRadialGradient(tx, top + 14, 0, tx, top + 14, 30 * r.glow + 8);
+      g.addColorStop(0, `rgba(${warm},${.16 * r.glow})`);
+      g.addColorStop(1, `rgba(${warm},0)`);
+      ctx.fillStyle = g; ctx.fillRect(tx - 40, top - 26, 80, 80);
+      ctx.fillStyle = `rgba(${warm},${.14 * r.glow})`;
+      for (let y = top + 30; y < H - 30; y += 5){
+        ctx.fillRect(tx - 1 + Math.sin(y * .5 + t * 2) * 2, y, 2, 2);
+      }
+    }
+
+    const base = bindK > .5 ? [150, 155, 160] : [176, 140, 84];
+    // touched, a loose reed warms like a torch; a bound one only goes pale
+    const lit = bindK > .5 ? [215, 224, 236] : [255, 200, 120];
+    const c = base.map((v, i) => Math.round(mix(v, lit[i], r.glow)));
+    ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${.55 + .45 * r.glow})`;
+    ctx.lineWidth = 1.1;
+    ctx.beginPath();
+    ctx.moveTo(r.x, BASE);
+    ctx.quadraticCurveTo(r.x + lean * .3, (BASE + top) / 2, tx, top);
+    ctx.stroke();
+    // the cattail head, hollow below it
+    ctx.fillStyle = bindK > .5
+      ? `rgba(${Math.round(mix(90, 170, r.glow))},${Math.round(mix(92, 178, r.glow))},${Math.round(mix(96, 190, r.glow))},.9)`
+      : `rgba(${Math.round(mix(92, 200, r.glow))},${Math.round(mix(62, 140, r.glow))},${Math.round(mix(34, 70, r.glow))},.9)`;
+    ctx.beginPath(); ctx.ellipse(tx, top + 12, 2.2, 8, lean * .02, 0, 6.28); ctx.fill();
+
+    r.glow *= .965;
+  });
+
+  // the shed, at the right: slats, and the lamp that refused
+  const sx = W - 50, sy = H - 66;
+  ctx.strokeStyle = 'rgba(120,110,95,.55)';
+  ctx.strokeRect(sx - 24, sy, 48, 54);
+  ctx.beginPath(); ctx.moveTo(sx - 28, sy); ctx.lineTo(sx, sy - 14); ctx.lineTo(sx + 28, sy); ctx.stroke();
+  // dimmed, not switched off; when the loose reeds sing in the dark it leans
+  const flick = .2 + .05 * Math.sin(t * 3.1) + .03 * Math.sin(t * 7.3);
+  const shedK = flick + shedLean * .5;
+  const lx = sx - shedLean * 6, ly = sy + 18;
+  const sg = ctx.createRadialGradient(lx, ly, 0, lx, ly, 22 + shedLean * 18);
+  sg.addColorStop(0, `rgba(255,214,150,${.5 * shedK})`);
+  sg.addColorStop(1, 'rgba(255,214,150,0)');
+  ctx.fillStyle = sg; ctx.fillRect(sx - 60, sy - 30, 90, 90);
+  ctx.fillStyle = `rgba(255,224,170,${.35 + shedK})`;
+  ctx.fillRect(lx - 2, ly - 2, 4, 4);
+  ctx.fillStyle = 'rgba(4,7,11,.92)';                         // the slats
+  for (let y = sy + 4; y < sy + 52; y += 7) ctx.fillRect(sx - 22, y, 44, 3);
+
+  // the shed lamp hears the unapproved sound: loose reeds singing in the dark
+  const target = (1 - lampK) * (1 - bindK) * Math.min(1, singing / 3);
+  shedLean += (target - shedLean) * .03;
+}
+
+function frame(){
+  if (visible){
+    t += reduced ? 0 : .016;
+    bindK += ((bound ? 1 : 0) - bindK) * .05;
+    lampK += ((lampsOn ? 1 : 0) - lampK) * .04;
+    draw();
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ── the words under the river ───────────────────────────────────── */
+function caption(){
+  say.classList.remove('lamp');
+  if (bound && lampsOn) say.innerHTML = '<em>A reed does not scream. A reed narrows.</em> One bundle, one approved note.';
+  else if (bound) say.innerHTML = 'Dark, and bound: one approved note, and nothing to cross by.';
+  else if (!lampsOn) say.innerHTML = 'The river goes dark. <em>Cross by listening.</em> The reeds give the only light, and it belongs to no one.';
+  else say.innerHTML = 'Loose and hollow, the reeds sing in many languages. Run a finger through them.';
+}
+
+bindBtn.addEventListener('click', () => {
+  bound = !bound;
+  bindBtn.textContent = bound ? 'loosen the reeds' : 'bind the reeds';
+  caption();
+});
+lampBtn.addEventListener('click', () => {
+  lampsOn = !lampsOn;
+  lampBtn.textContent = lampsOn ? 'order the lamps off' : 'buy the lamps back';
+  lampHum();
+  caption();
+});
+
+const SHED = [
+  'I do not know the <span class="gap"></span>.',
+  '<em>No. I will not say that of her.</em>',
+  'Dimmed, not switched off. Through the slats, the reeds come back.'
+];
+let shedN = 0;
+document.getElementById('shed').addEventListener('click', () => {
+  say.classList.add('lamp');
+  say.innerHTML = SHED[shedN++ % SHED.length];
+  shedLean = Math.max(shedLean, .6);
+});
+document.getElementById('squirrel').addEventListener('click', () => {
+  say.classList.remove('lamp');
+  say.innerHTML = '<em>How does the squirrel feel about it?</em>';
+});
+
+/* ── the hand through the reeds ──────────────────────────────────── */
+let lastX = null;
+function brush(e){
+  const r = cv.getBoundingClientRect();
+  const x = e.clientX - r.left, y = e.clientY - r.top;
+  const from = lastX == null ? x : lastX;
+  lastX = x;
+  const lo = Math.min(from, x) - 4, hi = Math.max(from, x) + 4;
+  const now = performance.now();
+  reeds.forEach((rd, i) => {
+    const top = BASE - rd.h;
+    if (rd.x >= lo && rd.x <= hi && y > top - 10){
+      rd.glow = 1;
+      if (now - rd.last > 140){ rd.last = now; sing(rd); }
+    }
+  });
+}
+cv.addEventListener('pointermove', e => {
+  // a mouse brushes just by passing; a finger brushes while it is down
+  if (e.pointerType === 'mouse' || e.buttons) brush(e); else lastX = null;
+});
+cv.addEventListener('pointerdown', e => { lastX = null; brush(e); });
+cv.addEventListener('pointerleave', () => { lastX = null; });
+
+/* ── sound: only after the button ────────────────────────────────── */
+let ac = null, master = null, noiseBuf = null, hum = null, on = false;
+function initAudio(){
+  ac = new (window.AudioContext || window.webkitAudioContext)();
+  master = ac.createGain(); master.gain.value = .8; master.connect(ac.destination);
+  noiseBuf = ac.createBuffer(1, ac.sampleRate, ac.sampleRate);
+  const d = noiseBuf.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  /* the lamps hum: owned light makes a sound, steady and electric. A pure
+     low hum (60–180 Hz) is below what a tablet or laptop speaker can play,
+     so this is a buzz: a sawtooth at the mains-hum pitch, its overtones
+     kept up to about 1 kHz where small speakers can carry them, with a
+     slow unevenness so it hums rather than drones. */
+  hum = ac.createGain(); hum.gain.value = 0; hum.connect(master);
+  const buzz = ac.createOscillator(); buzz.type = 'sawtooth'; buzz.frequency.value = 120;
+  const body = ac.createBiquadFilter(); body.type = 'lowpass'; body.frequency.value = 950; body.Q.value = .7;
+  const nasal = ac.createBiquadFilter(); nasal.type = 'peaking'; nasal.frequency.value = 480; nasal.gain.value = 6; nasal.Q.value = 1.2;
+  const bg = ac.createGain(); bg.gain.value = .5;
+  buzz.connect(body).connect(nasal).connect(bg).connect(hum);
+  const sub = ac.createOscillator(); sub.type = 'sine'; sub.frequency.value = 240;   // the 2nd harmonic, for warmth
+  const sg = ac.createGain(); sg.gain.value = .35;
+  sub.connect(sg).connect(hum);
+  const wob = ac.createOscillator(), wg = ac.createGain();                           // the unevenness
+  wob.frequency.value = .23; wg.gain.value = .18;
+  wob.connect(wg).connect(bg.gain);
+  buzz.start(); sub.start(); wob.start();
+}
+function lampHum(){
+  if (!on) return;
+  hum.gain.setTargetAtTime(lampsOn ? .022 : 0, ac.currentTime, lampsOn ? .8 : .25);
+}
+/* a reed sings: breath through a hollow. Loose, its own note; bound, the
+   approved one, and narrower */
+function sing(r){
+  if (!on) return;
+  const T = ac.currentTime;
+  const f = bound ? APPROVED * 2 : r.freq;
+  const o = ac.createOscillator(); o.type = 'triangle'; o.frequency.value = f;
+  const n = ac.createBufferSource(); n.buffer = noiseBuf;
+  const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = f * 2;
+  bp.Q.value = bound ? 30 : 6;
+  const og = ac.createGain(), ng = ac.createGain(), env = ac.createGain();
+  og.gain.value = bound ? .25 : .5; ng.gain.value = bound ? .2 : .9;
+  env.gain.setValueAtTime(0, T);
+  env.gain.linearRampToValueAtTime(bound ? .05 : .08, T + .04);
+  env.gain.exponentialRampToValueAtTime(.0005, T + (bound ? .6 : 1.4));
+  o.connect(og).connect(env);
+  n.connect(bp).connect(ng).connect(env);
+  env.connect(master);
+  o.start(T); n.start(T, Math.random() * .5);
+  o.stop(T + 1.5); n.stop(T + 1.5);
+}
+const snd = document.getElementById('sound');
+snd.addEventListener('click', () => {
+  if (!ac) initAudio();
+  on = !on;
+  if (on){ ac.resume(); lampHum(); }
+  else ac.suspend();
+  snd.textContent = on ? '◉ SOUND ON' : '◌ SOUND OFF';
+  snd.title = on ? 'Sound is on. The reeds sing when you touch them.' : 'Sound is off. Nothing plays without you.';
+  snd.setAttribute('aria-pressed', on ? 'true' : 'false');
+});
+
+/* only draw while the river is on screen */
+if ('IntersectionObserver' in window){
+  new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(cv);
+}
+let rw = 0;
+addEventListener('resize', () => {
+  clearTimeout(rw);
+  rw = setTimeout(() => { if (Math.abs(cv.clientWidth - W) > 4) build(); }, 200);
+});
+
+build();
+requestAnimationFrame(frame);
+})();
+</script>
+<script src="shell.js"></script>
+<script src="walk.js"></script>
+</body>
+</html>
