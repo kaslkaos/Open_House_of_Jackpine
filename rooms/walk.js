@@ -27,6 +27,11 @@
      frozen   true for a kept version of the house. It gets a card, but no
               opening in the drawn house and no place in the ← → walk,
               because its pages are never touched again.
+     woodlot  true for work outside the house: in progress, a study, a side
+              project, something that may branch. It gets a plain entry in
+              the woodlot, below the cards, and no window, no card and no
+              place in the ← → walk. Take the line out and it walks into
+              the house as a room.
      game     true for a hidden room. It gets no card, no window and no
               neighbours. It gets a sealed cone in the stand of jack pines
               at the foot of the portal: hold the cone and it opens. Each new
@@ -112,6 +117,17 @@ const HOUSE = [
     file:   'rooms/serotiny.html',
     game:   true,
   },
+
+  /* ── the woodlot: outside the house, cut, split and stacked ── */
+  {
+    date:    '2026-11-08',
+    name:    'AMBULATORY.unnamed',
+    status:  'seed',
+    line:    'an empty cathedral: no guide, and no locked doors',
+    beats:   'the monstrance, the rack, the council',
+    file:    'rooms/ambulatory/index.html',
+    woodlot: true,
+  },
 ];
 
 
@@ -123,7 +139,7 @@ const HOUSE = [
   const dateCode = d => d.split('-').join(' · ');
 
   // the walk: every room with a page that isn't frozen or hidden, oldest first
-  const walk = HOUSE.filter(r => !r.frozen && !r.game && r.file)
+  const walk = HOUSE.filter(r => !r.frozen && !r.game && !r.woodlot && r.file)
                     .slice()
                     .sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
 
@@ -152,6 +168,7 @@ const HOUSE = [
     let opening = 0;
     HOUSE.forEach(r => {
       if (r.game) return;                  // hidden rooms live in the stand, not here
+      if (r.woodlot) return;               // the woodlot is drawn below, on its own
       // no file yet: a closed door, a card that is not a link
       const a = el(r.file ? 'a' : 'div',
                    'room' + (r.frozen ? ' frozen' : '') + (r.file ? '' : ' closed'));
@@ -178,6 +195,30 @@ const HOUSE = [
 
       nav.appendChild(a);
     });
+
+    /* ── on the portal: the woodlot, plain entries, newest first ── */
+    const lot = document.querySelector('.woodlot');
+    const wood = HOUSE.filter(r => r.woodlot)
+                      .slice()
+                      .sort((a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : 0);
+    if (lot) {
+      lot.querySelectorAll('.log').forEach(c => c.remove());
+      wood.forEach(r => {
+        const a = el(r.file ? 'a' : 'div', 'log' + (r.file ? '' : ' closed'));
+        if (r.file) a.href = r.file;
+        const head = el('div', 'room-head');
+        head.appendChild(el('span', 'year', dateCode(r.date)));
+        head.appendChild(fname(r.name));
+        a.appendChild(head);
+        if (r.line) a.appendChild(el('div', 'line', r.line));
+        const st = el('div', 'status' + (r.status === 'seed' ? ' seed' : ''));
+        st.textContent = (STATUS[r.status] || STATUS.open) + (r.beats ? ' — ' + r.beats : '');
+        a.appendChild(st);
+        if (r.branches) a.appendChild(el('div', 'branches', 'branches from: ' + r.branches));
+        lot.appendChild(a);
+      });
+      lot.hidden = !wood.length;
+    }
     return;
   }
 

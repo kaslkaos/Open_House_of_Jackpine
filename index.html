@@ -252,6 +252,26 @@
   /* announced, not yet built: the door is drawn but does not open */
   .room.closed{cursor:default;border-left-style:dotted}
 
+  /* ── the woodlot: outside the house. Plainer than the cards on purpose:
+     no ember, no window, a ruled line between logs. ─────────────────── */
+  .woodlot .lead{margin:0 0 .9rem;font-size:.78rem;color:var(--bone-dim);line-height:1.6}
+  .log{
+    display:block;
+    text-decoration:none;
+    color:inherit;
+    padding:.85rem .2rem .85rem .9rem;
+    border-top:1px dashed #3a2c1e;
+    border-left:2px solid #3a2c1e;
+    transition:border-color .45s,background-color .45s;
+  }
+  .log:last-child{border-bottom:1px dashed #3a2c1e}
+  .log .line{margin-top:.2rem;font-size:.78rem;color:var(--bone);opacity:.82}
+  .log :is(.year,.fname,.ext,.line,.status,.branches){transition:color .45s}
+  .log:not(.closed):is(:hover,:focus-visible,:active){border-left-color:var(--amber);background-color:rgba(59,42,26,.45);outline:none}
+  .log:not(.closed):is(:hover,:focus-visible,:active) :is(.year,.fname,.ext,.status){color:var(--amber-hot)}
+  .log:focus-visible{box-shadow:0 0 0 2px var(--electric)}
+  .log.closed{cursor:default;border-left-style:dotted}
+
   /* ── the house, above the cards, and the stand, at the foot ───────────
      Both drawn by portal.js from the house register. Loose on purpose:
      a roofline of glyphs, windows that are embers until they are lit. */
@@ -404,6 +424,17 @@
       <a class="room" href="versions/2026-08-06_solitude.html">HOUSE_OF_JACKPINE.exe</a>
     </noscript>
   </nav>
+
+  <div class="rule">the woodlot</div>
+
+  <!-- the woodlot: work outside the house, drawn from the register (rooms/walk.js) -->
+  <section class="woodlot" aria-label="The woodlot">
+    <p class="lead">Outside the house: cut, split and stacked. Work in progress, studies,
+      things that may branch. Some of it will be carried in as rooms.</p>
+    <noscript>
+      <a class="log" href="rooms/ambulatory/index.html">AMBULATORY.unnamed</a>
+    </noscript>
+  </section>
 
   <div class="rule">the formulas</div>
 

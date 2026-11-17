@@ -173,7 +173,7 @@
   const house = document.getElementById('house');
   if (house) {
     // the openings: every room on the walk and every closed door, in card order
-    const rooms = HOUSE.filter(r => !r.frozen && !r.game);
+    const rooms = HOUSE.filter(r => !r.frozen && !r.game && !r.woodlot);
     const cards = [...document.querySelectorAll('.room[data-opening]')];
     const cardFor = i => cards.find(c => +c.dataset.opening === i);
     const LADDER = ['◎', '◉', '⦿'];
