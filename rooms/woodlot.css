@@ -1,0 +1,43 @@
+/* ∞⟨🍁∴↯⟩∞  THE WOODLOT — entries outside the house, on the portal and on
+   woodlot.html. Plainer than the cards on purpose: no ember, no window,
+   a dashed line between logs. Drawn by walk.js from the register. */
+
+.woodlot .lead,.duff .lead{margin:0 0 .9rem;font-size:.78rem;color:#8a8d84;line-height:1.6}
+.log{
+  border-top:1px dashed #3a2c1e;
+  border-left:2px solid #3a2c1e;
+  transition:border-color .45s,background-color .45s;
+}
+.log:last-of-type{border-bottom:1px dashed #3a2c1e}
+.log-main{display:block;text-decoration:none;color:inherit;padding:.85rem .2rem .85rem .9rem}
+.log .room-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:.6rem}
+.log .year{color:#39ff5a;font-size:.78rem;letter-spacing:.12em;flex:none}
+.log .fname{color:#e8e8e0;font-size:clamp(.82rem,3.2vw,1rem);font-weight:700;word-break:break-word}
+.log .fname .ext{color:#1c7a2c;font-weight:400;white-space:nowrap}
+.log .line{margin-top:.2rem;font-size:.78rem;color:#e8e8e0;opacity:.82}
+.log .status{margin-top:.5rem;font-size:.68rem;letter-spacing:.14em;color:#1c7a2c}
+.log .status.seed{color:#8a7a3a}
+.log .branches{margin-top:.3rem;font-size:.68rem;letter-spacing:.08em;color:#8a8d84}
+.log :is(.year,.fname,.ext,.line,.status,.branches){transition:color .45s}
+.log:has(.log-main:is(:hover,:focus-visible,:active)){border-left-color:#e8a64e;background-color:rgba(59,42,26,.45)}
+.log-main:is(:hover,:focus-visible,:active) :is(.year,.fname,.ext,.status){color:#f2c27a}
+.log-main:focus-visible{outline:none;box-shadow:0 0 0 2px #3ec1ff}
+.log.closed .log-main{cursor:default}
+.log.closed{border-left-style:dotted}
+.log-sub{
+  display:inline-block;margin:0 0 .85rem .9rem;padding:.35rem 0;
+  font-size:.7rem;letter-spacing:.1em;color:#a8743f;text-decoration:none;
+  border-bottom:1px solid #3a2c1e;
+}
+.log-sub:hover,.log-sub:focus-visible{color:#f2c27a;border-color:#e8a64e;outline:none}
+.log-more{
+  display:inline-block;margin-top:.9rem;padding:.4rem 0;
+  font-size:.75rem;letter-spacing:.12em;color:#e8a64e;text-decoration:none;
+}
+.log-more:hover,.log-more:focus-visible{color:#f2c27a;outline:none}
+
+/* the duff: retired pieces, quieter still */
+.duff .log{opacity:.7}
+
+/* a hidden section, or its rule, stays hidden whatever else styles it */
+[hidden]{display:none!important}

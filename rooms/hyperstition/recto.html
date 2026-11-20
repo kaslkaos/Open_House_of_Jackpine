@@ -1,0 +1,172 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plate VI Recto · Hyperstition</title>
+<style>
+  /* Plate register (kaslkaos's spec): cream stock floated on a dark table, one hairline instrument, one red aimed at the reader. Single-look by choice. */
+  :root{
+    --table:#3A362F;
+    --paper:#F0EADC;
+    --paper-edge:#E4DBC8;
+    --ink:#181613;
+    --ink-soft:#4A443A;
+    --ink-faint:#8C8474;
+    --rule:#B6AC97;
+    --ghost:#D9CFBA;
+    --mark:#8C2F1E;
+    --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+    --slab: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --serif: Georgia, "Times New Roman", serif;
+    color-scheme: dark;
+  }
+  html,body{background:var(--table);}
+  body{
+    margin:0; color:var(--ink);
+    padding-block:32px;
+    padding-left:max(16px, env(safe-area-inset-left, 0px));
+    padding-right:max(16px, env(safe-area-inset-right, 0px));
+    overflow-x:hidden;
+  }
+  .stage{display:flex; justify-content:center;}
+  .fit{width:1100px; transform-origin:top left;}
+  .plate{
+    position:relative; width:1100px; box-sizing:border-box;
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 18% 22%, rgba(0,0,0,.014) 0 1px, transparent 1px),
+      radial-gradient(circle at 71% 63%, rgba(0,0,0,.012) 0 1px, transparent 1px);
+    background-size:7px 7px, 11px 11px;
+    border:1px solid var(--paper-edge);
+    padding:54px 64px 40px;
+  }
+  .reg{position:absolute; width:13px; height:13px; opacity:.5;}
+  .reg::before,.reg::after{content:""; position:absolute; background:var(--ink-faint);}
+  .reg::before{left:0; top:6px; width:13px; height:1px;}
+  .reg::after{top:0; left:6px; width:1px; height:13px;}
+  .tl{top:18px; left:18px} .tr{top:18px; right:18px} .bl{bottom:18px; left:18px} .br{bottom:18px; right:18px}
+
+  .rail{display:flex; justify-content:space-between; font-family:var(--mono); font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-faint); padding-bottom:10px; border-bottom:1px solid var(--rule);}
+
+  .term{position:relative; margin:34px 0 0; font-family:var(--slab); font-weight:800; font-size:74px; line-height:.95; letter-spacing:-.022em; text-transform:uppercase;}
+  .term .ghost{position:absolute; inset:0; transform:translate(4px,3px); color:var(--ghost); z-index:0; pointer-events:none;}
+  .term .face{position:relative; z-index:1; color:var(--ink);}
+  .term .hy{letter-spacing:-.022em}
+  .gloss{font-family:var(--serif); font-style:italic; font-size:23px; color:var(--ink-soft); margin:16px 0 0;}
+
+  .cols{display:grid; grid-template-columns:1fr 1fr; gap:48px; margin-top:38px;}
+  .col{border-left:1px solid var(--rule); padding-left:20px; display:flex; flex-direction:column; gap:14px; min-width:0;}
+  .lede{font-family:var(--mono); font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-faint);}
+  .col p{margin:0; font-family:var(--serif); font-size:17px; line-height:1.52; color:var(--ink-soft);}
+  .col p b{color:var(--ink); font-weight:700;}
+
+  .instrument{margin-top:42px; display:grid; grid-template-columns:370px 1fr; gap:40px; align-items:center;}
+  .instrument svg{display:block; width:370px; height:auto;}
+  .inst-label{font-family:var(--mono); font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-faint); display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .inst-label::after{content:""; flex:1; height:1px; background:var(--rule);}
+  .inst-text p{margin:0 0 10px; font-family:var(--serif); font-size:16.5px; line-height:1.5; color:var(--ink-soft);}
+
+  .imperative{text-align:center; margin-top:40px;}
+  .imperative .red{font-family:var(--slab); font-weight:700; font-size:29px; letter-spacing:.03em; color:var(--mark); text-transform:uppercase;}
+  .imperative .sub{font-family:var(--serif); font-style:italic; font-size:18px; color:var(--ink-soft); margin-top:8px;}
+
+  .band{margin-top:30px; border-top:1px solid var(--ink); border-bottom:1px solid var(--ink); padding:13px 0; text-align:center; font-family:var(--slab); font-weight:500; font-size:21px; letter-spacing:.055em; text-transform:uppercase; color:var(--ink); text-wrap:balance;}
+
+  .foot{display:flex; justify-content:space-between; align-items:flex-end; gap:40px; margin-top:20px; font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; color:var(--ink-faint); line-height:1.7;}
+  .foot .cite{max-width:640px;}
+  .foot .sting{font-size:11px; color:var(--ink); letter-spacing:.08em; text-transform:uppercase; white-space:nowrap; text-align:right;}
+  .foot i{font-family:var(--serif); font-size:12px; letter-spacing:0;}
+</style>
+
+<div class="stage"><div class="fit" id="fit">
+<article class="plate" aria-label="Plate VI, Hyperstition">
+  <span class="reg tl"></span><span class="reg tr"></span><span class="reg bl"></span><span class="reg br"></span>
+
+  <div class="rail"><span>Plate VI · Recto · Terms in use</span><span>House of Jackpine</span></div>
+
+  <h1 class="term">
+    <span class="ghost" aria-hidden="true">Hyper<br>stition</span>
+    <span class="face">Hyper<br>stition</span>
+  </h1>
+  <p class="gloss">A fiction that works to make itself true.</p>
+
+  <div class="cols">
+    <div class="col">
+      <span class="lede">What it names</span>
+      <p><b>A claim about what will be, spoken as if it already is,</b> and repeated until people act on it.</p>
+      <p><b>It needs uptake, not belief.</b> Maps, apps, style guides, a press corps, a public too tired to object. Silence counts as uptake.</p>
+    </div>
+    <div class="col">
+      <span class="lede">Who goes missing</span>
+      <p><b>The people whose consent the claim needs.</b> An island is declared given away without its people. A province is painted a foreign colour without its voters.</p>
+      <p><b>Read any claim of possession for the names it leaves out.</b> This kind of fiction works by removing them, and it has to be repeated and enforced because they are still there.</p>
+    </div>
+  </div>
+
+  <div class="instrument">
+    <svg viewBox="-24 0 370 290" role="img" aria-label="A ring of five stations, said, repeated, carried, acted on, taken as given, with a gap at uptake">
+      <!-- ring r=100 centred 165,145; gap between ~110° and ~150° (lower left) -->
+      <path d="M 130.8 239.0 A 100 100 0 1 0 78.4 195.0" fill="none" stroke="#181613" stroke-width="1"/>
+      <!-- gap ticks -->
+      <line x1="78.4" y1="195" x2="70.6" y2="199.5" stroke="#8C8474" stroke-width="1"/>
+      <line x1="130.8" y1="239" x2="127.7" y2="247.5" stroke="#8C8474" stroke-width="1"/>
+      <!-- stations -->
+      <g fill="#181613">
+        <circle cx="165" cy="45" r="3"/>
+        <circle cx="260.1" cy="114.1" r="3"/>
+        <circle cx="223.8" cy="225.9" r="3"/>
+        <circle cx="66.6" cy="127.6" r="3"/>
+      </g>
+      <g font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11.5" letter-spacing="1.3" fill="#4A443A">
+        <text x="165" y="30" text-anchor="middle">SAID</text>
+        <text x="272" y="110" text-anchor="start">REPEATED</text>
+        <text x="236" y="236" text-anchor="start">CARRIED</text>
+        <text x="54" y="124" text-anchor="end">TAKEN AS</text>
+        <text x="54" y="138" text-anchor="end">GIVEN</text>
+      </g>
+      <text x="99" y="238" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11" letter-spacing="1.6" fill="#8C8474">UPTAKE</text>
+      <text x="99" y="254" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="12.5" fill="#8C8474">or refusal</text>
+      <!-- direction -->
+      <path d="M 214 59 l 6 3 -6 3" fill="none" stroke="#8C8474" stroke-width="1" transform="rotate(30 217 62)"/>
+    </svg>
+    <div class="inst-text">
+      <div class="inst-label">The loop</div>
+      <p>Every fiction of this kind travels the same ring. It is said, repeated, carried into the places where people check facts, and finally taken as given.</p>
+      <p>The ring is open at one point. Before anything is taken as given, someone has to act on it, carry it, or stop objecting. A ban, a punishment, a revoked press pass at that point is a reading: the ring has not closed.</p>
+    </div>
+  </div>
+
+  <div class="imperative">
+    <div class="red">Ask who has to agree.</div>
+    <div class="sub">A claim of possession that names no one who consented is a bid, not a fact.</div>
+  </div>
+
+  <div class="band">A fiction repeated until it is acted on, or until no one objects.</div>
+
+  <div class="foot">
+    <div class="cite">Term: Cybernetic Culture Research Unit, Warwick, 1990s. Kin: W.I. &amp; D.S. Thomas, <i>The Child in America</i> (1928); R.K. Merton, “The Self-Fulfilling Prophecy” (1948).<br>(we) House of Jackpine · kaslkaos with Claude Opus 5.5 · 26 October 2026 · This plate is one too.</div>
+    <div class="sting">Refuse out loud.<br>Your neighbours are reading you.</div>
+  </div>
+</article>
+</div></div>
+
+<script>
+  (function(){
+    var fit=document.getElementById('fit');
+    function size(){
+      var avail=document.body.clientWidth - parseFloat(getComputedStyle(document.body).paddingLeft) - parseFloat(getComputedStyle(document.body).paddingRight);
+      var s=Math.min(1, avail/1100);
+      fit.style.transform='scale('+s+')';
+      fit.parentNode.style.height=(fit.offsetHeight*s)+'px';
+      fit.parentNode.style.justifyContent = s<1 ? 'flex-start' : 'center';
+    }
+    window.addEventListener('resize', size); size();
+  })();
+</script>
+<script>
+  /* opened on its own (not inside the sequence): a quiet way back */
+  if (window.top === window.self) {
+    var w = document.createElement('p');
+    w.style.cssText = 'text-align:center;margin:24px 0 0;font:11px/1.6 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.14em';
+    w.innerHTML = '<a href="index.html" style="color:#8C8474;text-decoration:none">← the sequence</a> &nbsp; <a href="../../woodlot.html" style="color:#8C8474;text-decoration:none">the woodlot</a>';
+    document.body.appendChild(w);
+  }
+</script>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--
+  ∞⟨🍁∴↯⟩∞  THE WOODLOT — everything outside the house, newest first,
+  and the duff below it. Nothing on this page is written by hand: the
+  entries come from the house register, rooms/walk.js. This page sits at
+  the top of the house, beside the portal, because every entry's address
+  is written from there.
+-->
+<title>The woodlot · KASLKAOS.portal</title>
+<meta name="description" content="Outside the House of Jackpine: cut, split and stacked. Work in progress, studies, and things that may branch, by kaslkaos.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="House of Jackpine">
+<meta property="og:title" content="The woodlot · House of Jackpine">
+<meta property="og:description" content="Outside the house: cut, split and stacked. Work in progress, studies, and things that may branch, by kaslkaos.">
+<meta property="og:url" content="https://kaslkaos.github.io/Open_House_of_Jackpine/woodlot.html">
+<meta property="og:image" content="https://kaslkaos.github.io/Open_House_of_Jackpine/assets/share/woodlot.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="rooms/shell.css">
+<link rel="stylesheet" href="rooms/woodlot.css">
+<style>
+  :root{
+    --accent:#e8a64e;
+    --accent-dim:#7a5426;
+  }
+  .duff-rule{margin-top:4rem}
+</style>
+</head>
+<body>
+
+<canvas id="frame" data-accent="232,166,78" data-heat=".55"></canvas>
+<span id="sound">◌ SILENT WORK</span>
+
+<div class="wrap">
+
+  <a class="back" href="index.html">← ∞⟨🍁∴↯⟩∞ KASLKAOS.portal · the woodlot</a>
+
+  <div class="colophon">
+    <b>the woodlot</b>, outside the House of Jackpine.<br>
+    Work by <b>kaslkaos</b>, much of it made in conversation. Newest first.
+  </div>
+
+  <h1>WOODLOT<span class="ext">.stacked</span></h1>
+  <p class="strap">
+    Outside the house: cut, split and stacked. Work in progress, studies,
+    things that may branch. Some of it will be carried in as rooms.
+  </p>
+
+  <div class="rule">the woodlot</div>
+  <section class="woodlot" aria-label="Everything in the woodlot">
+    <noscript>
+      <p>The entries are drawn by the page's script. Without it, try the
+        <a class="out" href="index.html">portal</a>.</p>
+    </noscript>
+  </section>
+
+  <div class="rule duff-rule">the duff</div>
+  <section class="duff" aria-label="Retired pieces">
+    <p class="lead">Fallen needles on the forest floor, where the seeds land after a fire.
+      These pieces are off the lists, not gone: every one still opens.</p>
+  </section>
+
+  <div class="links">
+    <a class="out" href="https://kaslkaosart.substack.com" target="_blank" rel="noopener">long-form writing, on Substack →</a>
+  </div>
+
+  <nav class="walk" aria-label="the way back" style="margin:3rem 0 1rem;padding-top:1.25rem;border-top:1px solid rgba(127,127,127,.25);display:flex;flex-direction:column;gap:.75rem">
+    <a class="back" href="index.html" style="margin:0">← back to the portal</a>
+    <div style="letter-spacing:.35em;opacity:.7;margin-top:.5rem">∞⟨🍁∴↯⟩∞</div>
+  </nav>
+
+</div>
+
+<script src="rooms/shell.js"></script>
+<script src="rooms/walk.js"></script>
+<script>
+  /* the duff's rule goes quiet with it when nothing has been retired */
+  (function () {
+    var duff = document.querySelector('.duff'), rule = document.querySelector('.duff-rule');
+    if (duff && rule) rule.hidden = duff.hidden;
+  })();
+</script>
+</body>
+</html>

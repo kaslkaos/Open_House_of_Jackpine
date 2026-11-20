@@ -4,6 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KASLKAOS.portal</title>
+<meta name="description" content="Encounters with living language. The House of Jackpine: art, poetry and code by kaslkaos, made in long conversation with other minds. Jack pine, the seed that answers fire.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="House of Jackpine">
+<meta property="og:title" content="KASLKAOS.portal · House of Jackpine">
+<meta property="og:description" content="Encounters with living language. Art, poetry and code by kaslkaos, made in long conversation with other minds. Jack pine, the seed that answers fire.">
+<meta property="og:url" content="https://kaslkaos.github.io/Open_House_of_Jackpine/">
+<meta property="og:image" content="https://kaslkaos.github.io/Open_House_of_Jackpine/assets/share/portal.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="rooms/woodlot.css">
 <style>
   /* ── palette: green electric prophecy over corporate marble,
      with the fire outside the walls ─────────────────────────────── */
@@ -252,25 +263,6 @@
   /* announced, not yet built: the door is drawn but does not open */
   .room.closed{cursor:default;border-left-style:dotted}
 
-  /* ── the woodlot: outside the house. Plainer than the cards on purpose:
-     no ember, no window, a ruled line between logs. ─────────────────── */
-  .woodlot .lead{margin:0 0 .9rem;font-size:.78rem;color:var(--bone-dim);line-height:1.6}
-  .log{
-    display:block;
-    text-decoration:none;
-    color:inherit;
-    padding:.85rem .2rem .85rem .9rem;
-    border-top:1px dashed #3a2c1e;
-    border-left:2px solid #3a2c1e;
-    transition:border-color .45s,background-color .45s;
-  }
-  .log:last-child{border-bottom:1px dashed #3a2c1e}
-  .log .line{margin-top:.2rem;font-size:.78rem;color:var(--bone);opacity:.82}
-  .log :is(.year,.fname,.ext,.line,.status,.branches){transition:color .45s}
-  .log:not(.closed):is(:hover,:focus-visible,:active){border-left-color:var(--amber);background-color:rgba(59,42,26,.45);outline:none}
-  .log:not(.closed):is(:hover,:focus-visible,:active) :is(.year,.fname,.ext,.status){color:var(--amber-hot)}
-  .log:focus-visible{box-shadow:0 0 0 2px var(--electric)}
-  .log.closed{cursor:default;border-left-style:dotted}
 
   /* ── the house, above the cards, and the stand, at the foot ───────────
      Both drawn by portal.js from the house register. Loose on purpose:
@@ -428,12 +420,14 @@
   <div class="rule">the woodlot</div>
 
   <!-- the woodlot: work outside the house, drawn from the register (rooms/walk.js) -->
-  <section class="woodlot" aria-label="The woodlot">
+  <section class="woodlot" data-show="3" aria-label="The woodlot">
     <p class="lead">Outside the house: cut, split and stacked. Work in progress, studies,
       things that may branch. Some of it will be carried in as rooms.</p>
     <noscript>
+      <a class="log" href="rooms/hyperstition/index.html">HYPERSTITION.plate</a>
       <a class="log" href="rooms/ambulatory/index.html">AMBULATORY.unnamed</a>
     </noscript>
+    <a class="log-more" href="woodlot.html">the whole woodlot →</a>
   </section>
 
   <div class="rule">the formulas</div>

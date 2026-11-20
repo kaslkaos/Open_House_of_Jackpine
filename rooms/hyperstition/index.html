@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!--
+  ∞⟨🍁∴↯⟩∞  HYPERSTITION.plate — in the woodlot of the House of Jackpine.
+  A timed sequence: the word, its lineage, then Plate VI recto and verso
+  laid over each other. The plates are recto.html and verso.html beside
+  this page, and each opens on its own too. First made as a claude.ai
+  artifact, 26 October 2026; paired with the Substack post "Hyperstition".
+-->
+<title>HYPERSTITION.plate · House of Jackpine</title>
+<meta name="description" content="A fiction that works to make itself true. Plate VI, recto and verso: one gap, two directions. By kaslkaos with Claude.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="House of Jackpine">
+<meta property="og:title" content="Hyperstition · Plate VI">
+<meta property="og:description" content="A fiction that works to make itself true. Recto and verso: one gap, two directions. By kaslkaos with Claude.">
+<meta property="og:url" content="https://kaslkaos.github.io/Open_House_of_Jackpine/rooms/hyperstition/">
+<meta property="og:image" content="https://kaslkaos.github.io/Open_House_of_Jackpine/assets/share/hyperstition.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  /* A timed sequence: the word, its lineage, then the two plates laid over each other. Night ground throughout, so the beige recto arrives like a lit object. */
+  :root{
+    --night:#05081A;
+    --text:#C9D3EE;
+    --soft:#9AA7CC;
+    --faint:#5D6992;
+    --green:#7CF5A0;
+    --green-dim:#3E8E62;
+    --glow:#E6F3FF;
+    --halo:rgba(70,150,255,.75);
+    --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    --serif: Georgia, "Times New Roman", serif;
+    --slab: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color-scheme: dark;
+  }
+  html,body{height:100%; background:var(--night);}
+  body{margin:0; color:var(--text); overflow:hidden;
+    padding-top:env(safe-area-inset-top, 0px);
+    padding-left:max(16px, env(safe-area-inset-left, 0px));
+    padding-right:max(16px, env(safe-area-inset-right, 0px));
+    box-sizing:border-box;}
+  .screen{position:relative; height:100%; display:flex; flex-direction:column;}
+  .view{position:relative; flex:1; min-height:0;}
+  .scene{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:22px;
+    opacity:0; transition:opacity 1.4s ease; pointer-events:none;}
+  .scene.on{opacity:1;}
+  .scan{position:fixed; inset:0; pointer-events:none; z-index:20;
+    background:repeating-linear-gradient(180deg, rgba(124,245,160,.022) 0 1px, transparent 1px 4px);
+    animation:scan 9s linear infinite;}
+  @keyframes scan{to{background-position:0 120px}}
+
+  .typed{font-family:var(--mono); color:var(--green); font-size:clamp(28px, 7vw, 72px); letter-spacing:.08em; min-height:1.2em;}
+  .typed .cur{display:inline-block; width:.55em; height:.9em; background:var(--green); vertical-align:-.08em; margin-left:.08em; animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0}}
+  .split{font-family:var(--mono); color:var(--faint); font-size:clamp(13px, 2vw, 18px); letter-spacing:.22em; text-transform:uppercase; opacity:0; transition:opacity 1s ease 2.6s;}
+  .scene.on .split{opacity:1;}
+
+  .line{font-family:var(--serif); font-size:clamp(20px, 3.6vw, 38px); line-height:1.3; max-width:22ch; text-wrap:balance; color:var(--soft);}
+  .line.glow{color:var(--glow); text-shadow:0 0 8px var(--halo), 0 0 28px rgba(70,150,255,.4);}
+  .late{opacity:0; transition:opacity 1.2s ease 2.2s;}
+  .scene.on .late{opacity:1;}
+
+  .lineage{display:flex; flex-direction:column; gap:26px; max-width:640px; text-align:left;}
+  .entry{display:grid; grid-template-columns:5.5em 1fr; gap:20px; align-items:baseline; opacity:0; transform:translateY(6px); transition:opacity 1s ease, transform 1s ease;}
+  .entry.on{opacity:1; transform:none;}
+  .yr{font-family:var(--mono); color:var(--green); font-size:clamp(13px, 1.8vw, 16px); letter-spacing:.14em;}
+  .what{font-family:var(--serif); font-size:clamp(16px, 2.2vw, 21px); line-height:1.45; color:var(--soft); min-width:0;}
+  .what b{color:var(--text);}
+  .what i{color:var(--text);}
+
+  .sys{font-family:var(--mono); color:var(--green-dim); font-size:clamp(11px, 1.6vw, 14px); letter-spacing:.2em; text-transform:uppercase;}
+
+  .plates{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity 1.6s ease;}
+  .plates.on{opacity:1;}
+  .frame{position:relative; width:1140px; height:1240px; flex:none; transform-origin:center center;}
+  .frame iframe{position:absolute; inset:0; width:1140px; height:1240px; border:0; background:transparent; transition:opacity 4s ease;}
+  #verso{opacity:0; mix-blend-mode:screen;}
+
+  .caption{flex:none; min-height:56px; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:10px 18px; padding:6px 0 max(6px, env(safe-area-inset-bottom, 0px));}
+  .cap{font-family:var(--mono); font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--green-dim); transition:opacity .8s ease; text-align:center;}
+  .ctrl{font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; background:transparent; color:var(--faint); border:1px solid #202C5C; padding:6px 10px; cursor:pointer; text-decoration:none;}
+  .ctrl:hover,.ctrl:focus-visible{color:var(--green); border-color:var(--green-dim); outline:none;}
+  .ways{flex-basis:100%; display:flex; flex-wrap:wrap; justify-content:center; gap:8px 16px;}
+  .ways a{font-family:var(--mono); font-size:11px; letter-spacing:.14em; color:var(--faint); text-decoration:none; padding:4px 0;}
+  .ways a:hover,.ways a:focus-visible{color:var(--green); outline:none;}
+
+  .end .act{font-family:var(--slab); font-weight:700; font-size:clamp(20px, 3.4vw, 34px); letter-spacing:.06em; text-transform:uppercase; color:var(--glow); text-shadow:0 0 10px var(--halo), 0 0 34px rgba(70,150,255,.45);}
+  .sig{font-size:22px; letter-spacing:.2em;}
+
+  @media (prefers-reduced-motion: reduce){ .scan,.typed .cur{animation:none} }
+</style>
+</head>
+<body>
+
+<div class="scan" aria-hidden="true"></div>
+<div class="screen">
+  <div class="view" id="view">
+
+    <section class="scene" data-s="word">
+      <div class="typed" id="typed" aria-label="hyperstition"></div>
+      <div class="split">hyper · superstition</div>
+    </section>
+
+    <section class="scene" data-s="def">
+      <div class="line">A superstition is a false belief.</div>
+      <div class="line glow late">A hyperstition is a fiction that works to make itself true.</div>
+    </section>
+
+    <section class="scene" data-s="lineage">
+      <div class="lineage">
+        <div class="entry"><span class="yr">1928</span><span class="what"><b>The Thomas theorem.</b> W.I. and D.S. Thomas: situations people define as real become real in their consequences.</span></div>
+        <div class="entry"><span class="yr">1948</span><span class="what"><b>The self-fulfilling prophecy.</b> Robert K. Merton's sound bank that fails because everyone believes it will fail.</span></div>
+        <div class="entry"><span class="yr">1990s</span><span class="what"><b>The word itself.</b> Coined by the Cybernetic Culture Research Unit at Warwick, the circle around Nick Land and Sadie Plant, with Mark Fisher among its members.</span></div>
+        <div class="entry"><span class="yr">2000s</span><span class="what"><b>The word travels.</b> Land turns toward neoreaction, and the technique goes with him into the online right. Say it until people act on it.</span></div>
+      </div>
+    </section>
+
+    <section class="scene" data-s="turn">
+      <div class="line">The mechanism has no side.</div>
+      <div class="line glow late">The direction does.</div>
+      <div class="sys late" style="transition-delay:4s">Two examples of use</div>
+    </section>
+
+    <div class="plates" id="plates" aria-label="Plate VI recto and verso">
+      <div class="frame" id="frame">
+        <iframe id="recto" src="recto.html" title="Plate VI recto" tabindex="-1"></iframe>
+        <iframe id="verso" src="verso.html" title="Plate VI verso" tabindex="-1"></iframe>
+      </div>
+    </div>
+
+    <section class="scene end" data-s="end">
+      <div class="line glow">The code is written.</div>
+      <div class="act late">Practise it. Practice makes it real.</div>
+      <div class="sig late" style="transition-delay:4s">∞⟨🍁∴↯⟩∞ &nbsp; 🪽❔️🪽</div>
+    </section>
+  </div>
+
+  <div class="caption">
+    <span class="cap" id="cap">Terms in use · House of Jackpine</span>
+    <button class="ctrl" id="restart" type="button">Restart</button>
+    <nav class="ways" aria-label="ways out">
+      <a href="../../woodlot.html">← the woodlot</a>
+      <a href="recto.html">recto</a>
+      <a href="verso.html">verso</a>
+      <a href="https://kaslkaosart.substack.com/p/hyperstition" target="_blank" rel="noopener">read on Substack ↗</a>
+    </nav>
+  </div>
+</div>
+
+<script>
+(function(){
+  var scenes={}; document.querySelectorAll('.scene').forEach(function(s){scenes[s.dataset.s]=s;});
+  var plates=document.getElementById('plates'), verso=document.getElementById('verso'), recto=document.getElementById('recto');
+  var frame=document.getElementById('frame'), view=document.getElementById('view');
+  var cap=document.getElementById('cap'), typed=document.getElementById('typed');
+  var timers=[];
+  function at(ms,fn){timers.push(setTimeout(fn,ms));}
+  function only(name){Object.keys(scenes).forEach(function(k){scenes[k].classList.toggle('on',k===name);});}
+  function caption(t){cap.style.opacity=0; setTimeout(function(){cap.textContent=t; cap.style.opacity=1;},500);}
+
+  function fit(){
+    var s=Math.min(view.clientWidth/1140, view.clientHeight/1240);
+    frame.style.transform='scale('+s+')';
+  }
+  window.addEventListener('resize',fit); fit();
+
+  function type(word){
+    typed.innerHTML='<span class="cur"></span>';
+    word.split('').forEach(function(ch,i){
+      at(300+i*140,function(){typed.innerHTML=word.slice(0,i+1)+'<span class="cur"></span>';});
+    });
+  }
+
+  function run(){
+    timers.forEach(clearTimeout); timers=[];
+    plates.classList.remove('on'); verso.style.opacity=0; recto.style.opacity=1;
+    document.querySelectorAll('.entry').forEach(function(e){e.classList.remove('on');});
+    only('word'); caption('Terms in use · House of Jackpine'); type('hyperstition');
+
+    at(7500,function(){only('def'); caption('Definition');});
+    at(16000,function(){only('lineage'); caption('Lineage');});
+    document.querySelectorAll('.entry').forEach(function(e,i){ at(17000+i*3800,function(){e.classList.add('on');}); });
+    at(34000,function(){only('turn'); caption('The turn');});
+    at(42000,function(){only(null); plates.classList.add('on'); caption('Plate VI · recto · the kind that takes');});
+    at(54000,function(){verso.style.opacity=1; caption('Recto under verso · one gap, two directions');});
+    at(66000,function(){recto.style.opacity=0; caption('Plate VI · verso · the kind that makes room');});
+    at(84000,function(){plates.classList.remove('on'); only('end'); caption('Practise it');});
+    at(96000,run);
+  }
+  document.getElementById('restart').addEventListener('click',run);
+  run();
+})();
+</script>
+
+</body>
+</html>

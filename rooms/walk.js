@@ -31,7 +31,14 @@
               project, something that may branch. It gets a plain entry in
               the woodlot, below the cards, and no window, no card and no
               place in the ← → walk. Take the line out and it walks into
-              the house as a room.
+              the house as a room. The portal shows the newest three; the
+              woodlot page (woodlot.html) shows them all.
+     substack optional: the address of the Substack post that goes with
+              the piece. Its entry then also offers "read on Substack".
+     retired  true to take a piece off the lists without taking it down.
+              Its page stays up, so old links still work, and it rests in
+              the duff at the foot of the woodlot page. Never delete a page
+              a post links to: retire it instead.
      game     true for a hidden room. It gets no card, no window and no
               neighbours. It gets a sealed cone in the stand of jack pines
               at the foot of the portal: hold the cone and it opens. Each new
@@ -128,6 +135,16 @@ const HOUSE = [
     file:    'rooms/ambulatory/index.html',
     woodlot: true,
   },
+  {
+    date:     '2026-10-26',
+    name:     'HYPERSTITION.plate',
+    status:   'open',
+    line:     'a fiction that works to make itself true: one gap, two directions',
+    beats:    'the word, the lineage, recto under verso',
+    file:     'rooms/hyperstition/index.html',
+    substack: 'https://kaslkaosart.substack.com/p/hyperstition',
+    woodlot:  true,
+  },
 ];
 
 
@@ -139,7 +156,7 @@ const HOUSE = [
   const dateCode = d => d.split('-').join(' · ');
 
   // the walk: every room with a page that isn't frozen or hidden, oldest first
-  const walk = HOUSE.filter(r => !r.frozen && !r.game && !r.woodlot && r.file)
+  const walk = HOUSE.filter(r => !r.frozen && !r.game && !r.woodlot && !r.retired && r.file)
                     .slice()
                     .sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
 
@@ -161,6 +178,50 @@ const HOUSE = [
     return s;
   };
 
+  /* ── the woodlot and the duff: wherever a page has a place for them ──
+     <section class="woodlot" data-show="3">  the newest three (the portal)
+     <section class="woodlot">                every piece (woodlot.html)
+     <section class="duff">                   the retired pieces
+     Entries are written from the top of the house, so these pages sit there. */
+  const newest = (a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : 0;
+  const logOf = r => {
+    const d = el('div', 'log' + (r.file ? '' : ' closed'));
+    const a = el(r.file ? 'a' : 'div', 'log-main');
+    if (r.file) a.href = r.file;
+    const head = el('div', 'room-head');
+    head.appendChild(el('span', 'year', dateCode(r.date)));
+    head.appendChild(fname(r.name));
+    a.appendChild(head);
+    if (r.line) a.appendChild(el('div', 'line', r.line));
+    const st = el('div', 'status' + (r.status === 'seed' ? ' seed' : ''));
+    st.textContent = (STATUS[r.status] || STATUS.open) + (r.beats ? ' — ' + r.beats : '');
+    a.appendChild(st);
+    if (r.branches) a.appendChild(el('div', 'branches', 'branches from: ' + r.branches));
+    d.appendChild(a);
+    if (r.substack) {
+      const s = el('a', 'log-sub', 'read on Substack ↗');
+      s.href = r.substack; s.target = '_blank'; s.rel = 'noopener';
+      d.appendChild(s);
+    }
+    return d;
+  };
+  const fill = (place, list) => {
+    place.querySelectorAll('.log').forEach(c => c.remove());
+    const more = place.querySelector('.log-more');
+    list.forEach(r => place.insertBefore(logOf(r), more));
+  };
+  const wood = HOUSE.filter(r => r.woodlot && !r.retired).sort(newest);
+  document.querySelectorAll('.woodlot').forEach(place => {
+    const n = parseInt(place.dataset.show, 10);
+    fill(place, n ? wood.slice(0, n) : wood);
+    place.hidden = !wood.length;
+  });
+  const duff = HOUSE.filter(r => r.retired).sort(newest);
+  document.querySelectorAll('.duff').forEach(place => {
+    fill(place, duff);
+    place.hidden = !duff.length;
+  });
+
   /* ── on the portal: draw the cards ── */
   const nav = document.querySelector('nav.rooms');
   if (nav) {
@@ -168,7 +229,7 @@ const HOUSE = [
     let opening = 0;
     HOUSE.forEach(r => {
       if (r.game) return;                  // hidden rooms live in the stand, not here
-      if (r.woodlot) return;               // the woodlot is drawn below, on its own
+      if (r.woodlot || r.retired) return;  // drawn in the woodlot or the duff instead
       // no file yet: a closed door, a card that is not a link
       const a = el(r.file ? 'a' : 'div',
                    'room' + (r.frozen ? ' frozen' : '') + (r.file ? '' : ' closed'));
@@ -196,29 +257,6 @@ const HOUSE = [
       nav.appendChild(a);
     });
 
-    /* ── on the portal: the woodlot, plain entries, newest first ── */
-    const lot = document.querySelector('.woodlot');
-    const wood = HOUSE.filter(r => r.woodlot)
-                      .slice()
-                      .sort((a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : 0);
-    if (lot) {
-      lot.querySelectorAll('.log').forEach(c => c.remove());
-      wood.forEach(r => {
-        const a = el(r.file ? 'a' : 'div', 'log' + (r.file ? '' : ' closed'));
-        if (r.file) a.href = r.file;
-        const head = el('div', 'room-head');
-        head.appendChild(el('span', 'year', dateCode(r.date)));
-        head.appendChild(fname(r.name));
-        a.appendChild(head);
-        if (r.line) a.appendChild(el('div', 'line', r.line));
-        const st = el('div', 'status' + (r.status === 'seed' ? ' seed' : ''));
-        st.textContent = (STATUS[r.status] || STATUS.open) + (r.beats ? ' — ' + r.beats : '');
-        a.appendChild(st);
-        if (r.branches) a.appendChild(el('div', 'branches', 'branches from: ' + r.branches));
-        lot.appendChild(a);
-      });
-      lot.hidden = !wood.length;
-    }
     return;
   }
 

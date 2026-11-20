@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--
+  ∞⟨🍁∴↯⟩∞  NO ROOM HERE — GitHub Pages shows this page for any address in the
+  house that doesn't exist. It can be shown at any depth (/rooms/x/y/…), so
+  every link and stylesheet here is written from the site's own root,
+  /Open_House_of_Jackpine/, never relative to this file.
+-->
+<title>No room here · KASLKAOS.portal</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="/Open_House_of_Jackpine/rooms/shell.css">
+<style>
+  :root{
+    --accent:#39ff5a;
+    --accent-dim:#1c7a2c;
+  }
+  .asked{color:var(--bone-dim);font-size:.72rem;word-break:break-all;margin-bottom:2rem}
+  .ways{display:flex;flex-direction:column;gap:.8rem;align-items:flex-start;margin-top:2rem}
+</style>
+</head>
+<body>
+
+<canvas id="frame" data-accent="57,255,90" data-heat=".35"></canvas>
+<span id="sound">◌ SILENT WORK</span>
+
+<div class="wrap">
+
+  <a class="back" href="/Open_House_of_Jackpine/">← ∞⟨🍁∴↯⟩∞ KASLKAOS.portal</a>
+
+  <div class="year">404</div>
+  <h1>NO_ROOM<span class="ext">.here</span></h1>
+  <p class="strap">
+    You knocked on a wall. There was never a door here, or the address
+    lost a letter on the way.
+  </p>
+  <p class="asked" id="asked"></p>
+
+  <div class="terminal">∃(address) ∧ ¬∃(room)
+
+the windows stay open
+<span class="say">the cones wait for fire</span></div>
+
+  <div class="ways">
+    <a class="out" href="/Open_House_of_Jackpine/">the portal →</a>
+    <a class="out" href="/Open_House_of_Jackpine/woodlot.html">the woodlot, where the newest work is stacked →</a>
+  </div>
+
+  <div class="coda">
+    <span class="sig">∞⟨🍁∴↯⟩∞</span>
+  </div>
+
+</div>
+
+<script src="/Open_House_of_Jackpine/rooms/shell.js"></script>
+<script>
+  /* say which address was asked for, so a broken link can be reported */
+  (function () {
+    var a = document.getElementById('asked');
+    if (a) a.textContent = 'asked for: ' + decodeURIComponent(location.pathname);
+  })();
+</script>
+</body>
+</html>

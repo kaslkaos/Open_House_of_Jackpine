@@ -16,6 +16,28 @@
 
 ---
 
+## The woodlot, the duff, share cards and the 404 (2026-11-20)
+
+New pieces go straight to this repository, about one a week. Each gets a folder
+of its own, `rooms/<name>/`, holding everything it needs, and one entry in the
+register, `rooms/walk.js`, with `woodlot: true`.
+
+- **The woodlot.** The portal shows the newest three, then "the whole woodlot →",
+  which is `woodlot.html`, beside the portal. It shows every piece, newest first.
+- **Substack.** Add `substack: '<address of the post>'` to an entry and it also
+  offers "read on Substack". The piece's own page should link to the post too.
+- **Retiring.** Add `retired: true`. The piece leaves the lists and rests in the
+  duff, at the foot of the woodlot page. **Its page stays up**, because posts
+  link to it. Never delete a page a post links to: retire it instead.
+- **Into the house.** Delete `woodlot: true` and the piece becomes a room, with
+  a card, a window and a place in the walk.
+- **Share cards.** Each page's `<head>` holds the text and picture a link shows
+  when shared (`og:title`, `og:description`, `og:image`). The pictures are
+  1200 × 630 and live in `assets/share/`. A new piece needs its own.
+- **404.html.** GitHub Pages shows it for any address in the house that doesn't
+  exist. Its links are written from `/Open_House_of_Jackpine/`, so it works at
+  any depth.
+
 ## Now: KASLKAOS.portal, a house that grows (2026-11-07)
 
 The portal began as a submission (Schloss Solitude, August 2026) and is now kaslkaos's
