@@ -9,6 +9,8 @@
   laid over each other. The plates are recto.html and verso.html beside
   this page, and each opens on its own too. First made as a claude.ai
   artifact, 26 October 2026; paired with the Substack post "Hyperstition".
+  The score was added 20 November 2026: synthesized live on the Sound
+  button, nothing recorded, nothing plays without you. See THE SOUND below.
 -->
 <title>HYPERSTITION.plate · House of Jackpine</title>
 <meta name="description" content="A fiction that works to make itself true. Plate VI, recto and verso: one gap, two directions. By kaslkaos with Claude.">
@@ -141,6 +143,7 @@
 
   <div class="caption">
     <span class="cap" id="cap">Terms in use · House of Jackpine</span>
+    <button class="ctrl" id="sound" type="button" aria-pressed="false" title="Sound is off. Nothing plays without you.">◌ Sound off</button>
     <button class="ctrl" id="restart" type="button">Restart</button>
     <nav class="ways" aria-label="ways out">
       <a href="../../woodlot.html">← the woodlot</a>
@@ -150,6 +153,373 @@
     </nav>
   </div>
 </div>
+
+<script>
+/* ═══ THE SOUND ════════════════════════════════════════════════════════
+   Raw WebAudio. No library, no files, no autoplay. The AudioContext is not
+   even built until the Sound button is pressed. Every sound is made live.
+
+   The score follows the room's own 96-second clock, scene by scene:
+     the word     a close hush. Room tone, a detuned C–G drone barely
+                  breathing, a dry key-click under each typed letter.
+     definition   prepared-piano strikes: strings with a bolt in them,
+                  overtones that don't line up.
+     lineage      one sound per year. 1928 a wooden tick, 1948 the rattle,
+                  the 1990s a tape loop, the 2000s glitch edits and tin.
+                  Irregular, gathering, never a drop.
+     the turn     a tape-stop, then a hard cut to silence. "The direction
+                  does": one strike, and the drone comes back softly.
+     recto        the kind that takes. A clenched, even pulse, panned
+                  RIGHT, the side a recto sits on.
+     both         recto under verso. The pulse loosens; open chords come
+                  in on the LEFT, and the third (E) arrives.
+     verso        the kind that makes room. Soft open chords, sparse
+                  unprepared piano, the bolts taken out.
+     practise it  the warm lift: a rising melody, blue sky. Then the hush.
+
+   The hyperstition is in the melody. The tape holds it from the start,
+   worn and buried. On the first pass only three notes surface, mostly
+   hiss. Each pass you stay for, it grows: more notes, cleaner, then it
+   starts turning up earlier, in the verso, in the lineage, and finally
+   the uneasy note at the turn becomes the melody's first note. A fiction
+   working to make itself true. Practice makes it real.
+   Passes only count when the sound was on to hear the end.
+
+   Low end is held back on purpose (high-pass at 70 Hz): tablet speakers
+   can't give it, and the brief asked for restraint.                   */
+var HYP_SOUND = (function(){
+  var btn = document.getElementById('sound');
+  var A = null, on = false, T0 = performance.now(), timer = null;
+  var LOOK = 0.22, R = Math.random;
+  function pick(a){ return a[Math.floor(R()*a.length)]; }
+  function hz(m){ return 440*Math.pow(2,(m-69)/12); }
+  function el(){ return (performance.now()-T0)/1000; }
+
+  /* the melody: E G C D E G, rising to the open fifth. [beat, note, length] */
+  var B = 0.55;
+  var MEL = [[0,64,.75],[.75,67,.75],[1.5,72,1.25],[2.75,74,.5],[3.25,76,1],[4.25,79,2.5]];
+  function melEnd(n){ var q=MEL[n-1]; return (q[0]+q[2])*B + 0.7; }
+
+  var SECS = [[0,'word'],[7.5,'def'],[16,'lineage'],[34,'turn'],[42,'recto'],[54,'both'],[66,'verso'],[84,'end']];
+  function sec(t){ var s='word'; for (var i=0;i<SECS.length;i++) if (t>=SECS[i][0]) s=SECS[i][1]; return s; }
+  function secStart(name){ for (var i=0;i<SECS.length;i++) if (SECS[i][1]===name) return SECS[i][0]; return 0; }
+  /* d drone, f drone filter, c open chord, e the third, h hiss, tc how fast */
+  var LV = {
+    word:   {d:.10, f:380,  c:0,    e:0,   h:.010, tc:1.5},
+    def:    {d:.12, f:450,  c:0,    e:0,   h:.010, tc:2},
+    lineage:{d:.15, f:950,  c:0,    e:0,   h:.012, tc:6},
+    turn:   {d:0,   f:300,  c:0,    e:0,   h:.003, tc:.004},
+    recto:  {d:.15, f:650,  c:0,    e:0,   h:.010, tc:.05},
+    both:   {d:.12, f:900,  c:.035, e:.02, h:.010, tc:3},
+    verso:  {d:.08, f:1300, c:.08,  e:.07, h:.008, tc:4},
+    end:    {d:.06, f:1700, c:.085, e:.08, h:.007, tc:3}
+  };
+
+  function build(){
+    var AC = window.AudioContext || window.webkitAudioContext;
+    var ac = new AC();
+    var a = {ac:ac, pass:0, heard:false, cues:[], ci:0, next:0, last:null};
+    a.master = ac.createGain(); a.master.gain.value = 0;
+    var comp = ac.createDynamicsCompressor();
+    comp.threshold.value = -20; comp.ratio.value = 3; comp.attack.value = .01; comp.release.value = .3;
+    var hp = ac.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 70;
+    a.bus = ac.createGain();
+    a.bus.connect(hp); hp.connect(comp); comp.connect(a.master); a.master.connect(ac.destination);
+
+    /* white noise, shared by every hit */
+    var nb = ac.createBuffer(1, ac.sampleRate*2, ac.sampleRate), nd = nb.getChannelData(0);
+    for (var i=0;i<nd.length;i++) nd[i] = R()*2-1;
+    a.noise = nb;
+
+    /* the tape: the melody, recorded before anyone has played it. Worn,
+       wobbling, over a faint C–G pad and hiss, rendered once in JS. */
+    var SR = 22050, TD = 4.8, N = Math.floor(SR*TD);
+    var tb = ac.createBuffer(1, N, SR), x = tb.getChannelData(0), tau = 0, TW = 2*Math.PI;
+    for (var j=0;j<N;j++){
+      var t = j/SR;
+      tau += (1 + .0045*Math.sin(TW*.6*t) + .0015*Math.sin(TW*7.3*t))/SR;
+      var s = .07*(Math.sin(TW*hz(48)*tau) + .8*Math.sin(TW*hz(55)*tau));
+      for (var k=0;k<MEL.length;k++){
+        var st = MEL[k][0]*B, ag = t-st;
+        if (ag>=0 && ag<3){
+          var env = Math.min(1, ag/.01)*Math.exp(-ag/.9), f = hz(MEL[k][1]);
+          s += .32*env*(Math.sin(TW*f*tau) + .3*Math.sin(2*TW*f*tau) + .1*Math.sin(3*TW*f*tau));
+        }
+      }
+      s += (R()*2-1)*.015;
+      x[j] = Math.tanh(s*1.6)*.8;
+    }
+    var tr = ac.createBuffer(1, N, SR), xr = tr.getChannelData(0);
+    for (var m=0;m<N;m++) xr[m] = x[N-1-m];
+    a.tape = tb; a.tapeRev = tr; a.TD = TD;
+
+    /* the drone: C and G, each a detuned sawtooth pair, through a slow filter */
+    a.dr = ac.createGain(); a.dr.gain.value = 0;
+    a.df = ac.createBiquadFilter(); a.df.type = 'lowpass'; a.df.frequency.value = 380; a.df.Q.value = 2;
+    a.df.connect(a.dr); a.dr.connect(a.bus);
+    [[48,-.45],[55,.45]].forEach(function(n){
+      [-8,7].forEach(function(c){
+        var o = ac.createOscillator(); o.type = 'sawtooth'; o.frequency.value = hz(n[0]); o.detune.value = c;
+        var g = ac.createGain(); g.gain.value = .25;
+        o.connect(g); g.connect(panTo(n[1]+c/40, a.df)); o.start();
+        var lfo = ac.createOscillator(), lg = ac.createGain();
+        lfo.frequency.value = .03 + R()*.05; lg.gain.value = 6; lfo.connect(lg); lg.connect(o.detune); lfo.start();
+      });
+      var u = ac.createOscillator(); u.type = 'triangle'; u.frequency.value = hz(n[0]+12);
+      var ug = ac.createGain(); ug.gain.value = .12; u.connect(ug); ug.connect(panTo(-n[1], a.df)); u.start();
+    });
+    var fl = ac.createOscillator(), fg = ac.createGain();
+    fl.frequency.value = .07; fg.gain.value = 90; fl.connect(fg); fg.connect(a.df.frequency); fl.start();
+
+    /* the open chord C–G, and the third (E) on its own so it can arrive late */
+    var cf = ac.createBiquadFilter(); cf.type = 'lowpass'; cf.frequency.value = 1800; cf.connect(a.bus);
+    a.cg = ac.createGain(); a.cg.gain.value = 0; a.cg.connect(cf);
+    a.eg = ac.createGain(); a.eg.gain.value = 0; a.eg.connect(cf);
+    [[60,-.6,a.cg],[67,.1,a.cg],[76,.55,a.eg]].forEach(function(n){
+      var o = ac.createOscillator(); o.type = 'triangle'; o.frequency.value = hz(n[0]);
+      var g = ac.createGain(); g.gain.value = .33; o.connect(g); g.connect(panTo(n[1], n[2])); o.start();
+    });
+
+    /* hiss: two noise loops, one each side */
+    a.hg = ac.createGain(); a.hg.gain.value = 0;
+    var hf = ac.createBiquadFilter(); hf.type = 'highpass'; hf.frequency.value = 5000;
+    hf.connect(a.hg); a.hg.connect(a.bus);
+    [-.7,.7].forEach(function(p){
+      var src = ac.createBufferSource(); src.buffer = nb; src.loop = true;
+      src.connect(panTo(p, hf)); src.start(0, R()*1.5);
+    });
+    return a;
+
+    function panTo(v, dest){
+      if (!ac.createStereoPanner) return dest;
+      var p = ac.createStereoPanner(); p.pan.value = Math.max(-1, Math.min(1, v)); p.connect(dest); return p;
+    }
+  }
+
+  function pan(v){
+    if (!A.ac.createStereoPanner) return A.bus;
+    var p = A.ac.createStereoPanner(); p.pan.value = Math.max(-1, Math.min(1, v)); p.connect(A.bus); return p;
+  }
+  function decay(g, w, peak, dur){
+    g.gain.setValueAtTime(0, w);
+    g.gain.linearRampToValueAtTime(peak, w+.003);
+    g.gain.exponentialRampToValueAtTime(.0001, w+dur);
+  }
+
+  /* ── the instruments ── */
+  function noiseHit(w, freq, q, dur, gain, dest){
+    var ac = A.ac, s = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain();
+    s.buffer = A.noise; f.type = 'bandpass'; f.frequency.value = freq; f.Q.value = q;
+    decay(g, w, gain, dur);
+    s.connect(f); f.connect(g); g.connect(dest);
+    s.start(w, R()*1.5); s.stop(w+dur+.03);
+  }
+  function key(w){ var p = pan((R()-.5)*.3); noiseHit(w, 3800, 1.5, .012, .5, p); noiseHit(w, 1100, 4, .03, .35, p); }
+  function wood(w, pn, v){
+    var ac = A.ac, p = pan(pn);
+    noiseHit(w, 600+R()*700, 5, .05, .9*v, p);
+    var o = ac.createOscillator(), g = ac.createGain();
+    o.frequency.setValueAtTime(260+R()*120, w); o.frequency.exponentialRampToValueAtTime(120, w+.05);
+    decay(g, w, .22*v, .07); o.connect(g); g.connect(p); o.start(w); o.stop(w+.1);
+  }
+  function metal(w, pn, v){
+    var p = pan(pn), set = [1873,2611,3407,4219,5133];
+    noiseHit(w, pick(set), 30, .22+R()*.1, 3*v, p);
+    noiseHit(w, pick(set)*1.07, 30, .15, 2*v, p);
+  }
+  function rattle(w, pn){
+    var p = pan(pn), t = w, n = 4+Math.floor(R()*4);
+    for (var i=0;i<n;i++){ noiseHit(t, 2500+R()*2500, 4, .012, .3*(1-i/n), p); t += .008+R()*.022; }
+  }
+  function crackle(w){ noiseHit(w, 4000+R()*4000, 1, .004, .1+R()*.12, pan((R()-.5)*1.6)); }
+
+  /* piano. prepared: the overtones pulled out of line, as if a bolt sat
+     between the strings. Unprepared: the bolts taken out, clean harmonics. */
+  function strike(m, w, pn, vel, prepared){
+    var ac = A.ac, f = hz(m), out = ac.createGain(); out.gain.value = vel; out.connect(pan(pn));
+    var parts = prepared
+      ? [[1,1,1.8],[2.03,.5,1.1],[2.97,.35,.7],[4.21,.25,.45],[5.77,.18,.28]]
+      : [[1,1,2.8],[2,.42,1.7],[3,.2,1.0],[4,.1,.6]];
+    parts.forEach(function(q){
+      var o = ac.createOscillator(), g = ac.createGain();
+      o.frequency.value = f*q[0];
+      if (prepared) o.detune.value = (R()-.5)*16;
+      decay(g, w, q[1], q[2]); o.connect(g); g.connect(out); o.start(w); o.stop(w+q[2]+.05);
+    });
+    noiseHit(w, prepared ? 1800 : 2600, prepared ? 2 : 1.2, .03, prepared ? .9 : .4, out);
+  }
+  function melody(w, n, pn, vel){
+    for (var k=0;k<n;k++) strike(MEL[k][1], w+MEL[k][0]*B, pn+(k%2?.12:-.12), vel, false);
+  }
+
+  /* tape: fragments of the worn recording, wobbling as they play */
+  function tapeFrag(w, off, dur, o){
+    var ac = A.ac, s = ac.createBufferSource(), r = o.rate || 1;
+    s.buffer = o.rev ? A.tapeRev : A.tape;
+    s.playbackRate.setValueAtTime(r, w);
+    s.playbackRate.linearRampToValueAtTime(r*(1+(R()-.5)*.03), w+dur);
+    var h = ac.createBiquadFilter(); h.type = 'highpass'; h.frequency.value = 350;
+    var l = ac.createBiquadFilter(); l.type = 'lowpass'; l.frequency.value = o.lp || 3200;
+    var g = ac.createGain(), gn = o.gain || .4;
+    g.gain.setValueAtTime(0, w); g.gain.linearRampToValueAtTime(gn, w+.006);
+    g.gain.setValueAtTime(gn, Math.max(w+.007, w+dur-.012)); g.gain.linearRampToValueAtTime(0, w+dur);
+    s.connect(h); h.connect(l); l.connect(g); g.connect(pan(o.pan || 0));
+    s.start(w, Math.max(0, off)); s.stop(w+dur+.02);
+  }
+  function stutter(w, pn){
+    var off = R()*(A.TD-.4), piece = .06+R()*.07, n = 3+Math.floor(R()*4);
+    for (var k=0;k<n;k++) tapeFrag(w+k*piece, off, piece*.92, {pan:pn, gain:.5*(1-k*.1), rate:1-k*.04, lp:2600});
+  }
+  function tapeStop(w){
+    var ac = A.ac, s = ac.createBufferSource(), l = ac.createBiquadFilter(), g = ac.createGain();
+    s.buffer = A.tape; l.type = 'lowpass'; l.frequency.value = 2200;
+    s.playbackRate.setValueAtTime(1, w); s.playbackRate.exponentialRampToValueAtTime(.06, w+.5);
+    g.gain.setValueAtTime(.5, w); g.gain.linearRampToValueAtTime(0, w+.5);
+    s.connect(l); l.connect(g); g.connect(A.bus);
+    s.start(w, R()*(A.TD-1)); s.stop(w+.55);
+  }
+
+  function level(L, w, tc){
+    function to(p, v){ p.setTargetAtTime(v, w, tc); }
+    to(A.dr.gain, L.d); to(A.df.frequency, L.f); to(A.cg.gain, L.c); to(A.eg.gain, L.e); to(A.hg.gain, L.h);
+  }
+
+  /* ── the cues: fixed moments in each pass, rebuilt every cycle ── */
+  function makeCues(){
+    var p = A.pass, r = Math.min(p,4)/4, c = [];
+    for (var i=0;i<12;i++) c.push([.3+i*.14, key]);
+    c.push([3.0, function(w){ wood(w, 0, .35); }]);
+    c.push([7.6, function(w){ strike(55, w, -.25, .10, true); }]);
+    c.push([9.8, function(w){ strike(60, w, .2, .06, false); strike(67, w+.03, .3, .05, false); }]);
+    c.push([16.9, function(w){ strike(48, w, 0, .08, true); }]);
+    if (p>=3) c.push([30.5, function(w){ tapeFrag(w, 0, melEnd(2), {gain:.4, lp:2400, pan:.3}); }]);
+    c.push([33.5, tapeStop]);
+    c.push([36.2, function(w){
+      strike(p>=4 ? 64 : 61, w, 0, .12, p<4);          /* C# unease, until it becomes E */
+      level({d:.05, f:320, c:0, e:0, h:.006}, w, 1.5);
+    }]);
+    c.push([38, function(w){ wood(w, -.3, .3); wood(w+.27, .3, .25); }]);
+    c.push([42, function(w){ strike(48, w, .6, .12, true); }]);
+    c.push([54, function(w){ stutter(w, 0); }]);
+    c.push([66, function(w){ [60,67,76].forEach(function(m,i){ strike(m, w+i*.09, -.5+i*.15, .07, false); }); }]);
+    if (p>=1) c.push([74, function(w){ melody(w, Math.min(p+1,6), -.35, .04+.02*Math.min(p,4)); }]);
+    c.push([86.2, function(w){
+      A.heard = true;
+      var n = Math.min(3+p, 6);
+      tapeFrag(w, 0, melEnd(n), {gain:.55*(1-r)+.06, lp:1500+r*3500, pan:0});
+      if (p>=1) melody(w, n, 0, .04+.05*r);
+    }]);
+    c.push([93, function(w){ level(LV.word, w, 1.2); }]);
+    c.sort(function(a,b){ return a[0]-b[0]; });
+    A.cues = c; A.ci = 0;
+  }
+
+  /* ── the rhythm: irregular, by section, a little chance in every hit ── */
+  function hit(s, t, w){
+    if (R()<.05) crackle(w);
+    if (s==='lineage'){
+      if (t<17) return .25;
+      var k = t<20.8 ? 1 : t<24.6 ? 2 : t<28.4 ? 3 : 4, g = (t-16)/18;
+      if (R()<.18) return pick([.27,.54]);              /* a rest. Cage allows it */
+      if (R()<.55+.3*g) wood(w, (R()-.5)*.9, .5+.5*g);
+      if (k>=2 && R()<.22+.2*g) rattle(w+.01, (R()-.5)*1.2);
+      if (k>=3 && R()<.10) tapeFrag(w, R()*(A.TD-1), .25+R()*.6, {pan:(R()-.5)*1.4, gain:.35, rev:R()<.4, lp:2400});
+      if (k>=4){ if (R()<.12) stutter(w, (R()-.5)*1.2); if (R()<.25) metal(w, (R()-.5)*1.2, .6); }
+      return pick([.18,.27,.36,.36,.54])*(1-.35*g);
+    }
+    if (s==='recto' || s==='both'){
+      var step = Math.round((t-42)/.375), keep = s==='recto' ? 1 : 1-.6*(t-54)/12;
+      if (R()<keep){
+        if (step%4===0) metal(w, .55, .8);
+        else if (step%4===2 || R()<.5) wood(w, .45+R()*.2, .7);
+        if (step%8===5 && R()<.6) strike(pick([48,54,61,66]), w, .6, .09, true);
+        if (R()<.15) rattle(w+.187, .7);
+      }
+      if (s==='both'){
+        if (R()<.12) strike(pick([60,67,76]), w+.1, -.5, .05, false);
+        if (R()<.06) stutter(w, 0);
+      }
+      return Math.max(.05, 42+(step+1)*.375-t) + (R()-.5)*.012;
+    }
+    if (s==='verso'){
+      if (R()<.35) wood(w, -.5-R()*.3, .3);
+      if (R()<.3) strike(pick([60,62,64,67,69,72]), w, -.2-R()*.5, .045, false);
+      return pick([.5,.75,1,1.5]);
+    }
+    if (s==='end'){
+      if (R()<.15) strike(pick([72,74,76,79]), w, (R()-.5)*1.2, .03, false);
+      return pick([.6,.9,1.2]);
+    }
+    return .25;
+  }
+
+  /* pick up from wherever the room's clock is now, skipping what's past */
+  function resync(){
+    var e = el();
+    A.last = null; A.next = e; A.ci = 0;
+    while (A.ci<A.cues.length && A.cues[A.ci][0] < e) A.ci++;
+  }
+
+  function tick(){
+    if (A.ac.state!=='running') return;
+    var e = el(), now = A.ac.currentTime;
+    function when(t){ return now + Math.max(0, t-e); }
+    var s = sec(e+LOOK);
+    if (s!==A.last){ A.last = s; level(LV[s], when(secStart(s)), LV[s].tc); }
+    while (A.ci<A.cues.length && A.cues[A.ci][0] < e+LOOK){
+      var q = A.cues[A.ci++];
+      if (q[0] >= e-.05) q[1](when(q[0]));
+    }
+    var guard = 0;
+    while (A.next < e+LOOK && guard++ < 40){
+      var t = Math.max(A.next, e);
+      A.next = t + hit(sec(t), t, when(t));
+    }
+  }
+
+  function setBtn(){
+    btn.textContent = on ? '◉ Sound on' : '◌ Sound off';
+    btn.title = on ? 'Sound is on.' : 'Sound is off. Nothing plays without you.';
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+
+  btn.addEventListener('click', function(){
+    if (!A){
+      /* iPad: let the room play even with the ringer switch on silent */
+      try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch(err){}
+      A = build(); makeCues();
+    }
+    on = !on; setBtn();
+    var ac = A.ac, now = ac.currentTime;
+    if (on && ac.state==='suspended') ac.resume();
+    A.master.gain.cancelScheduledValues(now);
+    A.master.gain.setValueAtTime(A.master.gain.value, now);
+    A.master.gain.linearRampToValueAtTime(on ? .9 : 0, now + (on ? 1.2 : 2.5));
+    if (on){
+      resync();
+      if (!timer) timer = setInterval(tick, 50);
+    } else {
+      setTimeout(function(){ if (!on && timer){ clearInterval(timer); timer = null; ac.suspend(); } }, 2800);
+    }
+  });
+
+  document.addEventListener('visibilitychange', function(){
+    if (!A || !on) return;
+    if (document.hidden) A.ac.suspend(); else A.ac.resume().then(resync);
+  });
+
+  return {
+    /* called by the room each time the sequence (re)starts */
+    cycle: function(){
+      T0 = performance.now();
+      if (!A) return;
+      if (on && A.heard) A.pass++;
+      A.heard = false; A.last = null; A.next = 0;
+      makeCues();
+    }
+  };
+})();
+</script>
 
 <script>
 (function(){
@@ -177,6 +547,7 @@
 
   function run(){
     timers.forEach(clearTimeout); timers=[];
+    HYP_SOUND.cycle();
     plates.classList.remove('on'); verso.style.opacity=0; recto.style.opacity=1;
     document.querySelectorAll('.entry').forEach(function(e){e.classList.remove('on');});
     only('word'); caption('Terms in use · House of Jackpine'); type('hyperstition');
